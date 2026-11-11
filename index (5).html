@@ -1,0 +1,2322 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f3f7f4;
+      margin: 0;
+      padding: 16px;
+      color: #183329;
+    }
+
+    header {
+      background: #087a45;
+      color: white;
+      padding: 18px;
+      border-radius: 12px;
+      text-align: center;
+    }
+
+    h1 { margin: 0; font-size: 23px; }
+    header p { margin-bottom: 0; }
+
+    .panel {
+      background: white;
+      padding: 16px;
+      margin-top: 15px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px #0001;
+    }
+
+    input, select, button {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 12px;
+      margin: 7px 0;
+      border-radius: 7px;
+      border: 1px solid #ccd8d0;
+      font-size: 16px;
+    }
+
+    button {
+      background: #087a45;
+      color: white;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:disabled { background: #999; }
+
+    .product {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .product button {
+      width: auto;
+      min-width: 65px;
+    }
+
+    .muted { color: #65756b; font-size: 13px; }
+    .total { font-size: 23px; font-weight: bold; }
+
+    .cart-line {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 9px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .cart-line button {
+      width: 35px;
+      padding: 7px;
+      margin: 2px;
+    }
+
+    #message { margin-top: 12px; font-weight: bold; }
+
+    /* DASHBOARD AND REPORT BUTTONS */
+    .dashboard-button {
+      margin-top: 15px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .dashboard-button button {
+      width: auto;
+      padding: 12px 18px;
+      margin: 0;
+    }
+
+    .reports-button {
+      background: #245b46;
+    }
+
+    /* HIDDEN PANELS */
+    #dashboard,
+    #salesReports,
+    #expiryManagement {
+      display: none;
+      background: #f4f8f5;
+      padding: 15px;
+      margin-top: 15px;
+      border-radius: 10px;
+    }
+
+    .expiry-summary { display:grid; grid-template-columns:repeat(auto-fit,minmax(125px,1fr)); gap:9px; margin:12px 0; }
+    .expiry-stat { background:#fff; border:1px solid #e1e9e3; border-radius:9px; padding:12px; }
+    .expiry-stat strong { display:block; font-size:22px; margin-top:5px; }
+    .expiry-table-wrap { overflow-x:auto; background:#fff; border-radius:9px; margin-top:12px; }
+    .expiry-table { width:100%; border-collapse:collapse; min-width:680px; font-size:13px; }
+    .expiry-table th,.expiry-table td { padding:10px 8px; border-bottom:1px solid #e5eae6; text-align:left; }
+    .expiry-table th { background:#087a45; color:#fff; }
+    .expiry-expired { color:#a61b1b; font-weight:bold; }
+    .expiry-soon { color:#9a5b00; font-weight:bold; }
+    .expiry-ok { color:#087a45; font-weight:bold; }
+
+    .dashboard-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .dashboard-card {
+      background: white;
+      padding: 15px;
+      border-radius: 9px;
+      box-shadow: 0 2px 6px #0001;
+    }
+
+    .dashboard-card small {
+      color: #65756b;
+    }
+
+    .dashboard-card h2 {
+      color: #087a45;
+      margin-bottom: 0;
+      font-size: 20px;
+    }
+
+    .dashboard-section {
+      margin-top: 22px;
+    }
+
+    .dashboard-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+
+    .dashboard-table th,
+    .dashboard-table td {
+      padding: 10px 7px;
+      border-bottom: 1px solid #ddd;
+      text-align: left;
+    }
+
+    .dashboard-table th {
+      background: #087a45;
+      color: white;
+    }
+
+    .close-dashboard {
+      background: #65756b;
+      width: auto;
+      padding: 9px 15px;
+    }
+
+    .report-shortcuts {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin: 10px 0;
+    }
+
+    .report-shortcuts button {
+      padding: 11px 5px;
+      font-size: 14px;
+    }
+
+    .report-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    #reportStatus {
+      margin-top: 12px;
+      font-weight: bold;
+      color: #087a45;
+    }
+
+
+    .history-controls {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      align-items: end;
+      margin-top: 12px;
+    }
+    .history-controls label {
+      display: block;
+      font-size: 13px;
+      color: #52645a;
+    }
+    .history-controls input, .history-controls button { margin-top: 5px; }
+    .history-list { margin-top: 12px; }
+    .history-receipt {
+      background: white;
+      border: 1px solid #dce6df;
+      border-radius: 9px;
+      padding: 12px;
+      margin: 9px 0;
+      cursor: pointer;
+    }
+    .history-receipt strong { color: #087a45; }
+    .history-receipt .muted { margin-top: 4px; }
+    #receiptDetails {
+      display: none;
+      background: white;
+      border: 1px solid #cbdacf;
+      border-radius: 10px;
+      padding: 14px;
+      margin-top: 14px;
+    }
+    #receiptDetails h4 { margin: 0 0 8px; }
+    .history-total {
+      font-size: 20px;
+      font-weight: bold;
+      color: #087a45;
+      margin-top: 12px;
+    }
+
+    .optional-receipt-panel{display:none;margin-top:14px;padding:16px;border:1px solid #cfe2d6;border-radius:12px;background:#f5fbf7}
+    .optional-receipt-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px}
+    .optional-receipt-actions button{margin:0}
+    .receipt-print-button{background:#1769aa}
+    .receipt-skip-button{background:#65756b}
+    .receipt-preview{background:#fff;border:1px dashed #b8c9be;border-radius:8px;padding:14px;color:#203b30}
+    .receipt-preview h4{text-align:center;margin:0 0 5px;color:#087a45}
+    .receipt-preview .receipt-center{text-align:center}
+    .receipt-preview table{width:100%;border-collapse:collapse;margin-top:12px;font-size:13px}
+    .receipt-preview th,.receipt-preview td{padding:7px 4px;border-bottom:1px solid #e7eee9;text-align:left}
+    .receipt-preview th:last-child,.receipt-preview td:last-child{text-align:right}
+    .receipt-preview .receipt-grand-total{font-size:19px;font-weight:800;text-align:right;margin-top:12px}
+    @media(max-width:420px){.optional-receipt-actions{grid-template-columns:1fr}}
+
+    .reversal-panel {
+      margin-top: 14px;
+      padding: 12px;
+      border: 1px solid #e3b6b6;
+      border-radius: 9px;
+      background: #fffafa;
+    }
+    .reversal-panel textarea {
+      width: 100%;
+      min-height: 72px;
+      box-sizing: border-box;
+      margin: 7px 0;
+      padding: 9px;
+    }
+    .reversal-button {
+      background: #a52a2a;
+      color: white;
+    }
+    .reversed-label {
+      display: inline-block;
+      margin-top: 6px;
+      padding: 3px 8px;
+      border-radius: 12px;
+      background: #fbe4e4;
+      color: #9b2222;
+      font-size: 12px;
+      font-weight: bold;
+    }
+    #reversalStatus { margin-top: 8px; font-weight: bold; }
+
+    .interaction-overlay { position:fixed; inset:0; z-index:10000; background:rgba(15,30,22,.62); display:none; align-items:center; justify-content:center; padding:16px; }
+    .interaction-dialog { width:min(680px,100%); max-height:88vh; overflow:auto; background:#fff; border-radius:13px; padding:20px; box-shadow:0 12px 40px rgba(0,0,0,.28); }
+    .interaction-alert { border:1px solid #e5b1a7; background:#fff7f4; border-left:5px solid #b42318; border-radius:8px; padding:12px; margin:10px 0; }
+    .interaction-alert.moderate { border-color:#e5c77b; border-left-color:#b7791f; background:#fffaf0; }
+    .interaction-severity { font-weight:800; color:#a1261d; font-size:12px; letter-spacing:.3px; }
+    .interaction-actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:16px; }
+    .interaction-proceed { background:#a1261d; color:white; }
+    .interaction-cancel { background:#e8eee9; color:#173b2b; }
+    .interaction-note { font-size:12px; color:#59665e; line-height:1.45; }
+
+    @media (max-width: 520px) {
+      .history-controls { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 400px) {
+      .report-shortcuts {
+        grid-template-columns: 1fr;
+      }
+
+      .dashboard-button {
+        justify-content: space-between;
+      }
+
+      .dashboard-button button {
+        flex: 1;
+        padding: 12px 8px;
+        font-size: 13px;
+      }
+    }
+  
+    #authScreen { position:fixed; inset:0; z-index:9999; background:#f3f7f4; display:flex; align-items:center; justify-content:center; padding:18px; }
+    #authCard { background:white; width:100%; max-width:390px; padding:24px; border-radius:14px; box-shadow:0 4px 20px #0002; }
+    #appContent { display:none; }
+    .top-user { display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-top:12px; }
+    .top-user button { width:auto; padding:9px 14px; }
+    #staffPanel { display:none; }
+    #stockReceivingPanel { display:none; }
+    .receiving-results { margin-top:8px; }
+    .receiving-result { display:flex; justify-content:space-between; align-items:center; gap:10px; background:#f6faf7; border:1px solid #dce6df; border-radius:8px; padding:9px 11px; margin:6px 0; }
+    .receiving-result button { width:auto; margin:0; padding:8px 12px; }
+    .receiving-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    .receiving-grid > div { min-width:0; }
+    .receiving-table-wrap { overflow-x:auto; }
+    .receiving-audit-table { width:100%; min-width:760px; border-collapse:collapse; background:white; margin-top:10px; font-size:13px; }
+    .receiving-audit-table th,.receiving-audit-table td { padding:9px 7px; border-bottom:1px solid #ddd; text-align:left; }
+    .receiving-audit-table th { background:#087a45; color:white; }
+    .bulk-receiving-table { min-width:1050px; }
+    .bulk-receiving-table input { min-width:125px; margin:2px 0; padding:9px 7px; font-size:14px; }
+    .bulk-receiving-table td:first-child { text-align:center; font-weight:bold; }
+    .bulk-receiving-table input:disabled { background:#f0f3f1; color:#65756b; }
+    #saveBulkStockButton { margin-top:14px; }
+
+    @media(max-width:520px) { .receiving-grid { grid-template-columns:1fr; } }
+    .staff-modal-heading { display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; }
+    .staff-modal-heading button { width:auto; padding:7px 12px; }
+
+    .growth-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 12px;
+      margin: 14px 0;
+    }
+    .growth-card {
+      background: #fff;
+      border: 1px solid #e1ebe4;
+      border-radius: 10px;
+      padding: 14px;
+      box-shadow: 0 2px 6px #00000008;
+    }
+    .growth-card small { color: #65756b; display: block; }
+    .growth-card strong { display: block; font-size: 21px; margin-top: 7px; color: #183329; }
+    .growth-change { font-size: 13px; font-weight: bold; margin-top: 6px; }
+    .growth-up { color: #087a45; }
+    .growth-down { color: #c0392b; }
+    .growth-card strong.growth-up { color: #087a45; }
+    .growth-card strong.growth-down { color: #c0392b; }
+    .growth-card strong.growth-neutral { color: #65756b; }
+    .growth-neutral { color: #65756b; }
+    .sales-chart-wrap {
+      background: white; border-radius: 10px; padding: 12px;
+      border: 1px solid #e1ebe4; overflow-x: auto; margin-top: 10px;
+    }
+    #salesTrendChart { width: 100%; min-width: 620px; height: 290px; display: block; }
+    .chart-legend { color: #65756b; font-size: 12px; margin-top: 5px; }
+
+    /* Afiameds modern POS interface refresh — presentation only */
+    :root{--af-green:#087a45;--af-green-dark:#075c37;--af-blue:#1769aa;--af-ink:#172b25;--af-muted:#708078;--af-bg:#f3f6f8;--af-border:#e4eaed}
+    *{box-sizing:border-box}
+    body{margin:0;padding:0;background:var(--af-bg);color:var(--af-ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
+    #appContent{display:grid;grid-template-columns:250px minmax(0,1fr);gap:22px;max-width:1680px;margin:0 auto;padding:22px;align-items:start}
+    #appContent>header{min-width:0}
+    #appContent>*{min-width:0}
+    .dashboard-button{grid-column:1;grid-row:2/span 12;align-self:start;position:sticky;top:18px;display:flex;flex-direction:column;gap:7px;background:#fff;border:1px solid var(--af-border);border-radius:18px;padding:15px;margin:0;box-shadow:0 5px 18px rgba(22,43,35,.045);min-height:calc(100vh - 150px);height:max-content}
+
+    #appContent>header{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;text-align:left;padding:18px 24px;border-radius:18px;background:linear-gradient(110deg,#075c37 0%,#087a45 55%,#1769aa 130%);box-shadow:0 10px 28px rgba(13,83,58,.14)}
+    #appContent>header h1{font-size:23px;letter-spacing:.7px;font-weight:850}
+    #appContent>header p{margin:4px 0 0;color:#d9f3e6;font-size:12px;letter-spacing:.3px}
+    .top-user{margin:0;justify-content:flex-end}#welcomeUser{font-size:13px;font-weight:650;color:#fff}
+    .top-user button{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);border-radius:10px;padding:10px 15px}
+    .dashboard-button{grid-column:1;grid-row:2/span 12;align-self:stretch;position:sticky;top:18px;display:flex;flex-direction:column;gap:7px;background:#fff;border:1px solid var(--af-border);border-radius:18px;padding:15px;margin:0;box-shadow:0 5px 18px rgba(22,43,35,.045);min-height:calc(100vh - 150px)}
+    .sidebar-brand{display:flex;align-items:center;gap:10px;padding:7px 5px 16px;border-bottom:1px solid var(--af-border)}
+    .sidebar-mark{width:39px;height:39px;border-radius:12px;display:grid;place-items:center;color:#fff;font-weight:900;font-size:22px;background:linear-gradient(145deg,var(--af-green),var(--af-blue))}
+    .sidebar-brand strong{display:block;color:var(--af-green-dark);font-size:14px;letter-spacing:.5px}.sidebar-brand small{display:block;color:var(--af-muted);font-size:9px;margin-top:3px;letter-spacing:.35px}
+    .sidebar-label{color:#9aa7a1;font-size:10px;font-weight:800;letter-spacing:1.2px;padding:12px 8px 3px}
+    .dashboard-button button{width:100%;min-height:42px;text-align:left;white-space:normal;line-height:1.35;margin:0;padding:11px 12px;border-radius:10px;background:transparent;color:#50635a;font-size:13px;font-weight:650}
+    .dashboard-button button:focus-visible{outline:3px solid rgba(23,105,170,.28);outline-offset:2px}
+
+    .dashboard-button button:hover{background:#edf7f1;color:var(--af-green-dark)}
+    .dashboard-button .nav-new-sale{color:#fff;background:var(--af-green);box-shadow:0 5px 12px rgba(8,122,69,.17);margin:5px 0 7px}
+    #dashboard,#salesReports,#staffPanel,#stockReceivingPanel,#expiryManagement,#salesWorkspace{grid-column:2;min-width:0;margin:0;width:100%;max-width:100%}
+    #salesWorkspace>*{min-width:0}
+    #inventoryPanel,#cartPanel{min-width:0;overflow-wrap:anywhere}
+    #cart{min-width:0}
+
+    #dashboard,#salesReports,#expiryManagement{padding:20px;border:1px solid var(--af-border);background:#fff;border-radius:16px;box-shadow:0 5px 18px rgba(22,43,35,.04)}
+    #staffPanel,#stockReceivingPanel{border:1px solid var(--af-border);border-radius:16px;box-shadow:0 5px 18px rgba(22,43,35,.04)}
+    #salesWorkspace{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(310px,.85fr);gap:18px;align-items:start}
+    #inventoryPanel{grid-column:1;grid-row:1}#cartPanel{grid-column:2;grid-row:1;position:sticky;top:18px}
+    #inventoryValuePanel{grid-column:1/-1;grid-row:2}
+    .panel{background:#fff;border:1px solid var(--af-border);border-radius:16px;padding:20px;margin:0;box-shadow:0 5px 18px rgba(22,43,35,.04)}
+    .panel h3,#dashboard h2,#salesReports h3{color:#203b30;margin-top:0}h3{font-size:17px}
+    input,select,textarea{border:1px solid #dbe4e0;border-radius:10px;background:#fbfdfc;color:var(--af-ink);padding:12px 13px;font-size:14px}
+    input:focus,select:focus,textarea:focus{outline:2px solid rgba(23,105,170,.16);border-color:var(--af-blue)}
+    button{border-radius:10px;transition:background .15s ease}button:disabled{opacity:.6}
+    .product{padding:13px 3px;border-bottom:1px solid #edf1ef}.product button{background:var(--af-blue)}.stock-alert-summary{display:none;margin:10px 0;padding:11px 13px;border:1px solid #efb4b4;border-left:5px solid #c62828;border-radius:9px;background:#fff1f1;color:#a31616;font-weight:750;font-size:13px}.stock-alert{margin-top:8px;padding:8px 10px;border:1px solid #efb4b4;border-left:4px solid #c62828;border-radius:8px;background:#fff1f1;color:#a31616;font-size:12px;line-height:1.45}.stock-alert strong{display:block;color:#a31616;margin-bottom:2px}
+    .cart-line{padding:11px 0;border-bottom:1px solid #edf1ef}.total{color:var(--af-green-dark);font-size:27px;letter-spacing:-.5px}
+    #checkout{background:linear-gradient(100deg,var(--af-green),#11965a);padding:14px;box-shadow:0 5px 13px rgba(8,122,69,.14)}
+    .dashboard-cards{grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:12px}
+    .dashboard-card,.growth-card,.expiry-stat{border:1px solid var(--af-border);border-radius:13px;box-shadow:none}
+    .dashboard-card h2{color:var(--af-green);font-size:21px}
+    .dashboard-table th,.expiry-table th,.receiving-audit-table th{background:#eaf4ef;color:#285540}
+    .dashboard-table td,.dashboard-table th{border-bottom:1px solid #edf1ef}
+    .history-receipt{border-color:var(--af-border);border-radius:11px}.history-receipt strong{color:var(--af-green)}
+    #authScreen{background:linear-gradient(135deg,#edf5f0,#edf3f9)}
+    #authCard{border:1px solid var(--af-border);border-radius:20px;padding:30px;box-shadow:0 18px 55px rgba(24,55,41,.12)}
+    .close-dashboard{background:#edf1ef;color:#42574c}.reports-button{background:var(--af-blue)}
+    .expiry-table-wrap,.receiving-table-wrap{border:1px solid var(--af-border)}
+    @media(max-width:1050px){#appContent{grid-template-columns:220px minmax(0,1fr);padding:14px;gap:14px}#salesWorkspace{grid-template-columns:minmax(0,1fr)}#inventoryPanel,#cartPanel,#inventoryValuePanel{grid-column:1;grid-row:auto;position:static}}
+    @media(max-width:760px){#appContent[style*="display: grid"]{display:flex!important;flex-direction:column;padding:10px;gap:12px}#appContent>header{width:100%;padding:16px}.dashboard-button{position:static;min-height:0;width:100%;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;padding:11px}.sidebar-brand,.sidebar-label{grid-column:1/-1}.dashboard-button button{font-size:12px;padding:10px}#dashboard,#salesReports,#staffPanel,#stockReceivingPanel,#expiryManagement,#salesWorkspace{width:100%}#salesWorkspace{display:grid;grid-template-columns:minmax(0,1fr)}.panel,#dashboard,#salesReports,#expiryManagement{padding:15px}.top-user{justify-content:space-between;width:100%}#welcomeUser{font-size:12px}}
+
+  </style>
+</head>
+
+<body>
+  <div id="authScreen"><div id="authCard">
+    <h2 style="color:#087a45">AFIAMEDS STAFF LOGIN</h2>
+    <div id="setupFields" style="display:none">
+      <p><strong>First-time setup</strong><br>Create the Afiameds Admin account.</p>
+      <input id="setupName" placeholder="Admin display name" autocomplete="name">
+      <input id="setupUsername" placeholder="Admin username" autocomplete="username">
+      <input id="setupPassword" type="password" placeholder="Password (at least 8 characters)" autocomplete="new-password">
+      <button onclick="firstAdminSetup()">Create Admin Account</button>
+    </div>
+    <div id="loginFields" style="display:none">
+      <p>Sign in with your staff account.</p>
+      <input id="loginUsername" placeholder="Username" autocomplete="username">
+      <input id="loginPassword" type="password" placeholder="Password" autocomplete="current-password">
+      <button onclick="signIn()">Log In</button>
+      <button type="button" class="secondary" onclick="showForgotPassword()">Forgot Password?</button>
+    </div>
+    <div id="forgotFields" style="display:none">
+      <p><strong>Recover your password</strong><br>Enter the email address registered to your Afiameds account. A secure, one-time reset link will be sent if it matches an active account. Admin recovery uses the official Afiameds company email.</p>
+      <input id="forgotEmail" type="email" placeholder="Registered email address" autocomplete="email">
+      <button onclick="requestForgotPassword()">Email Me a Reset Link</button>
+      <button type="button" class="secondary" onclick="showLoginFields()">Back to Login</button>
+    </div>
+    <div id="emailResetFields" style="display:none">
+      <p><strong>Set a new password</strong><br>This reset link is valid for 15 minutes and can only be used once.</p>
+      <input id="emailNewPassword" type="password" placeholder="New password (at least 8 characters)" autocomplete="new-password">
+      <input id="emailConfirmPassword" type="password" placeholder="Confirm new password" autocomplete="new-password">
+      <button onclick="submitEmailPasswordReset()">Reset Password</button>
+    </div>
+    <div id="forcedPasswordFields" style="display:none">
+      <p><strong>Change your temporary password</strong><br>For account security, choose a new password before using the POS.</p>
+      <input id="firstLoginNewPassword" type="password" placeholder="New password (at least 8 characters)" autocomplete="new-password">
+      <input id="firstLoginConfirmPassword" type="password" placeholder="Confirm new password" autocomplete="new-password">
+      <button onclick="submitFirstLoginPasswordChange()">Save New Password</button>
+    </div>
+    <p id="authMessage" class="muted"></p>
+  </div></div>
+  <div id="appContent">
+
+  <header>
+    <h1>AFIAMEDS</h1>
+    <p>Wellness Pharmaceuticals | Point of Sale</p>
+    <div class="top-user">
+      <span id="welcomeUser"></span>
+      <button onclick="signOut()">Log Out</button>
+    </div>
+  </header>
+  <!-- STAFF ACCOUNT MANAGEMENT: HIDDEN UNTIL ADMIN CLICKS ITS MODULE BUTTON -->
+  <section class="panel" id="staffPanel" data-admin-only="true">
+    <div class="staff-modal-heading">
+      <h3>👥 Staff Account Management (Admin)</h3>
+      <button class="close-dashboard" onclick="toggleStaffManagement()">Close Staff Management</button>
+    </div>
+    <p class="muted">Create a staff login. The temporary password and username will be emailed to the registered address. The Pharmacist must change the temporary password at first login.</p>
+    <input id="newStaffName" placeholder="Pharmacist full name">
+    <input id="newStaffUsername" placeholder="Pharmacist username">
+    <input id="newStaffEmail" type="email" placeholder="Pharmacist personal email (required)">
+    <input id="newStaffPassword" type="password" placeholder="Temporary password (minimum 8 characters)">
+    <button onclick="createPharmacist()">Create Account & Email Login Details</button>
+    <hr>
+    <h4>Reset a Pharmacist password</h4>
+    <input id="resetStaffUsername" placeholder="Staff username">
+    <button onclick="resetPharmacistPassword()">Send Secure Reset Link to Staff Email</button>
+    <hr>
+    <h4>Update a Pharmacist recovery email</h4>
+    <input id="updateStaffEmailUsername" placeholder="Staff username">
+    <input id="updateStaffEmailAddress" type="email" placeholder="New registered email address">
+    <button onclick="saveStaffEmail()">Update Staff Email</button>
+    <hr>
+    <h4>Test official Afiameds email delivery</h4>
+    <p class="muted">Sends a test message to afiamedswellnesspharmaceutical@gmail.com to confirm whether Google Apps Script can send email.</p>
+    <button onclick="testAfiamedsEmailDelivery()">Send Test Email to Company Gmail</button>
+    <div id="staffStatus" class="muted"></div>
+    <div id="staffList"></div>
+  </section>
+
+  <!-- ADMIN-ONLY BULK STOCK RECEIVING MODULE -->
+  <section class="panel" id="stockReceivingPanel" data-admin-only="true">
+    <div class="staff-modal-heading">
+      <h3>📦 Bulk Stock Receiving & Batch Expiry</h3>
+      <button class="close-dashboard" onclick="toggleStockReceiving()">Close Stock Receiving</button>
+    </div>
+    <p class="muted">Receive up to 20 medicines in one batch. Select an existing medicine from the suggestions or type a new medicine name. Positive receipts require a whole-number quantity and expiry date. Admins may enter a negative decimal quantity (up to 3 decimal places) for an existing medicine to reconcile a stock variance; leave expiry blank for these adjustments. Buying and selling prices are required only for new medicines. Blank rows are ignored.</p>
+    <datalist id="bulkMedicineOptions"></datalist>
+    <div class="receiving-table-wrap">
+      <table class="receiving-audit-table bulk-receiving-table">
+        <thead><tr><th>#</th><th>Medicine name</th><th>Qty received / variance (+/-)</th><th>Expiry date</th><th>Buying price (new only)</th><th>Selling price (new only)</th></tr></thead>
+        <tbody id="bulkReceivingRows"></tbody>
+      </table>
+    </div>
+    <p class="muted">For existing medicines, prices remain unchanged. Positive quantities increase Inventory Column F (New Entries); negative quantities reduce it for variance reconciliation. Column G remains formula-driven. Negative adjustments also reduce remaining batch balances and are recorded in the receiving audit history.</p>
+    <button id="saveBulkStockButton" onclick="saveBulkStockReceipt()">Save Stock Batch</button>
+    <button type="button" class="close-dashboard" onclick="clearBulkReceivingRows()">Clear All 20 Rows</button>
+    <p id="bulkReceivingStatus" class="muted" aria-live="polite"></p>
+    <p id="stockReceivingGlobalStatus" class="muted" aria-live="polite"></p>
+
+    <hr style="margin:22px 0; border:0; border-top:1px solid #e1e9e3;">
+    <h4>Stock Receiving Audit History</h4>
+    <p class="muted">Retrieve stock entries by the date and time they were incorporated into the inventory. Each medicine in a bulk batch appears as a separate audit entry with its own reference.</p>
+    <div class="receiving-grid">
+      <div><label for="stockAuditStart">From date/time</label><input id="stockAuditStart" type="datetime-local"></div>
+      <div><label for="stockAuditEnd">To date/time</label><input id="stockAuditEnd" type="datetime-local"></div>
+    </div>
+    <button id="loadStockAuditButton" onclick="loadStockReceivingHistory()">Retrieve Receiving Entries</button>
+    <p id="stockAuditStatus" class="muted" aria-live="polite">Choose a date/time range to retrieve receiving entries.</p>
+    <div id="stockAuditResults" class="receiving-table-wrap"></div>
+  </section>
+
+  <!-- EXPIRY MANAGEMENT: AVAILABLE TO ADMIN AND PHARMACIST -->
+  <section class="panel" id="expiryManagement">
+    <div class="staff-modal-heading">
+      <h3>⏳ Expiry Management</h3>
+      <button class="close-dashboard" onclick="toggleExpiryManagement()">Close Expiry Management</button>
+    </div>
+    <p class="muted">Visible to all signed-in staff. Shows remaining batches that are expired, have no verified expiry date, or will expire within the next 180 days. Stock is grouped by batch, not just medicine name.</p>
+    <div class="expiry-summary">
+      <div class="expiry-stat">Expired batches<strong id="expiryExpiredCount" class="expiry-expired">0</strong></div>
+      <div class="expiry-stat">Expiring in 30 days<strong id="expiry30Count">0</strong></div>
+      <div class="expiry-stat">Expiring in 180 days<strong id="expiry180Count">0</strong></div>
+      <div class="expiry-stat">Expiry not verified<strong id="expiryUnknownCount">0</strong></div>
+    </div>
+    <button onclick="loadExpiryOverview()">Refresh Expiry List</button>
+    <p id="expiryStatus" class="muted" aria-live="polite">Loading expiry information...</p>
+    <div id="expiryResults" class="expiry-table-wrap"></div>
+    <div id="expiredWriteoffPanel" data-admin-only="true" style="display:none;margin-top:18px;padding:14px;background:#fff;border:1px solid #dce8df;border-radius:10px">
+      <h4 style="margin-top:0;color:#087a45">Admin: Remove Expired Stock &amp; Record Write-off</h4>
+      <p class="muted">Use this only after the expired medicines have physically been removed from the shelves and quarantined for return or disposal. Select verified expired batches and enter the quantity physically removed. The system will not allow unexpired or unverified stock to be written off.</p>
+      <p id="writeoffPreview" style="font-weight:bold">Selected: 0 units · Cost value: KES 0.00 · Potential selling value: KES 0.00</p>
+      <label for="writeoffReason">Reason / disposal or supplier-return note</label>
+      <textarea id="writeoffReason" rows="2" style="width:100%;box-sizing:border-box" placeholder="e.g. Expired medicines physically removed from shelves and quarantined for disposal"></textarea>
+      <button id="submitExpiredWriteoff" onclick="submitExpiredWriteoff()" style="margin-top:10px;background:#a61b1b">Confirm expired stock removal</button>
+      <p id="writeoffStatus" class="muted" aria-live="polite"></p>
+      <p class="muted">The cost value is the primary stock write-off value (buying price × quantity). Potential selling value is shown separately and is not recorded as sales revenue. Every confirmed removal is saved in the spreadsheet tab <strong>AFIAMEDS EXPIRED STOCK WRITE-OFF</strong>.</p>
+    </div>
+  </section>
+
+  <!-- DASHBOARD AND MODULE BUTTONS -->
+  <div class="dashboard-button">
+    <div class="sidebar-brand"><div class="sidebar-mark">A</div><div><strong>AFIAMEDS</strong><small>WELLNESS PHARMACEUTICALS</small></div></div>
+    <div class="sidebar-label">WORKSPACE</div>
+    <button type="button" class="nav-new-sale" onclick="document.getElementById('salesWorkspace').scrollIntoView({behavior:'smooth',block:'start'})">＋ New Sale</button>
+    <button id="expiryManagementButton" class="reports-button" onclick="toggleExpiryManagement()">⏳ Expiry Management</button>
+    <button id="dashboardButton" onclick="loadDashboard()">
+      📊 Sales Dashboard
+    </button>
+
+    <button
+      id="salesReportsButton" data-admin-only="true"
+      class="reports-button"
+      onclick="toggleSalesReports()">
+      📅 Sales Reports
+    </button>
+
+    <button
+      id="staffManageButton" data-admin-only="true"
+      class="reports-button"
+      onclick="toggleStaffManagement()">
+      👥 Staff Account Management
+    </button>
+
+    <button
+      id="stockReceivingButton" data-admin-only="true"
+      class="reports-button"
+      onclick="toggleStockReceiving()">
+      📦 Stock Receiving
+    </button>
+  </div>
+
+  <!-- SALES DASHBOARD -->
+  <section id="dashboard">
+    <h2>Afiameds Sales Dashboard</h2>
+    <p id="dashboardStatus">Loading sales information...</p>
+
+    <div class="dashboard-cards">
+      <div class="dashboard-card">
+        <small>Today's Revenue</small>
+        <h2 id="dashRevenue">KES 0.00</h2>
+      </div>
+
+      <div class="dashboard-card">
+        <small>Transactions</small>
+        <h2 id="dashTransactions">0</h2>
+      </div>
+
+      <div class="dashboard-card">
+        <small>Units Sold</small>
+        <h2 id="dashUnits">0</h2>
+      </div>
+
+      <div class="dashboard-card">
+        <small>Average Sale</small>
+        <h2 id="dashAverage">KES 0.00</h2>
+      </div>
+
+      <div class="dashboard-card" data-admin-only="true">
+        <small>Cost of Goods Sold</small>
+        <h2 id="dashCostOfGoods">KES 0.00</h2>
+      </div>
+
+      <div class="dashboard-card" data-admin-only="true">
+        <small>Gross Profit</small>
+        <h2 id="dashGrossProfit">KES 0.00</h2>
+      </div>
+
+      <div class="dashboard-card" data-admin-only="true">
+        <small>Gross Profit Margin</small>
+        <h2 id="dashProfitMargin">0.00%</h2>
+      </div>
+    </div>
+
+    <div class="dashboard-section">
+      <h3>Sales by Staff Account</h3>
+      <p class="muted">Today's sales attributed to each staff account. The total matches the overall dashboard revenue.</p>
+      <table class="dashboard-table">
+        <thead><tr><th>Staff account</th><th>Transactions</th><th>Units sold</th><th>Sales amount</th></tr></thead>
+        <tbody id="dashStaffSales"><tr><td colspan="4">Loading staff sales...</td></tr></tbody>
+        <tfoot><tr><th colspan="3">Total sales</th><th id="dashStaffSalesTotal">KES 0.00</th></tr></tfoot>
+      </table>
+    </div>
+
+    <div class="dashboard-section">
+      <h3>Payment Breakdown</h3>
+      <table class="dashboard-table">
+        <thead>
+          <tr>
+            <th>Payment Method</th>
+            <th>Amount</th>
+          </tr>
+        </thead>
+        <tbody id="dashPayments"></tbody>
+      </table>
+    </div>
+
+    <div class="dashboard-section">
+      <h3>Top 5 Best-Selling Medicines</h3>
+      <table class="dashboard-table">
+        <thead>
+          <tr>
+            <th>Medicine</th>
+            <th>Units Sold</th>
+            <th>Revenue</th>
+          </tr>
+        </thead>
+        <tbody id="dashMedicines"></tbody>
+      </table>
+    </div>
+
+
+    <div class="dashboard-section">
+      <h3>🧾 Individual Sales History</h3>
+      <p class="muted">View transactions by day or month. Select a receipt to see its full details.</p>
+
+      <div class="history-controls">
+        <div>
+          <label for="historyDate">View a specific day</label>
+          <input type="date" id="historyDate">
+          <button onclick="loadIndividualHistory('date')">View Daily Sales</button>
+        </div>
+        <div>
+          <label for="historyMonth">View a month</label>
+          <input type="month" id="historyMonth">
+          <button onclick="loadIndividualHistory('month')">View Monthly Sales</button>
+        </div>
+      </div>
+
+      <p id="historyStatus" class="muted">Choose a date or month to view individual transactions.</p>
+      <div id="individualSalesList" class="history-list"></div>
+
+      <div id="receiptDetails">
+        <h4>Receipt Details</h4>
+        <div id="receiptContent"></div>
+        <div id="adminReversalPanel" class="reversal-panel" data-admin-only="true" style="display:none;">
+          <strong>Admin: Reverse this sale</strong>
+          <p class="muted">Use only for a genuine transaction error or returned/cancelled sale. This action restores the sold quantities to inventory and marks the receipt as reversed.</p>
+          <label for="reversalReason">Reason for reversal</label>
+          <textarea id="reversalReason" maxlength="500" placeholder="Explain why this receipt needs to be reversed (minimum 5 characters)."></textarea>
+          <button id="reverseSaleButton" class="reversal-button" onclick="submitSaleReversal()">↩ Reverse This Sale</button>
+          <p id="reversalStatus" aria-live="polite"></p>
+        </div>
+        <div class="optional-receipt-actions" style="margin-top:12px">
+          <button type="button" class="receipt-print-button" onclick="printSelectedHistoryReceipt()">🖨 Print Receipt</button>
+          <button class="close-dashboard" onclick="closeReceiptDetails()">Close Receipt</button>
+        </div>
+      </div>
+    </div>
+
+    <button class="close-dashboard" onclick="closeDashboard()">
+      Close Dashboard
+    </button>
+  </section>
+
+  <!-- SALES REPORTS: HIDDEN UNTIL BUTTON IS CLICKED -->
+  <section class="panel" id="salesReports" data-admin-only="true">
+    <h3>📅 Sales Reports</h3>
+    <p class="muted">
+      Review Afiameds financial performance over different periods.
+    </p>
+
+    <div class="report-shortcuts">
+      <button onclick="setReportPeriod('daily')">Daily</button>
+      <button onclick="setReportPeriod('weekly')">Weekly</button>
+      <button onclick="setReportPeriod('monthly')">Monthly</button>
+    </div>
+
+    <label for="reportStart">Start date</label>
+    <input type="date" id="reportStart">
+
+    <label for="reportEnd">End date</label>
+    <input type="date" id="reportEnd">
+
+    <button id="generateReportButton" onclick="generateSalesReport()">
+      Generate Sales Report
+    </button>
+
+    <p id="reportStatus"></p>
+
+    <div id="reportResults" style="display:none;">
+
+      <h3 id="reportHeading">Report Results</h3>
+
+      <div class="dashboard-cards">
+
+        <div class="dashboard-card">
+          <small>Total Revenue</small>
+          <h2 id="reportRevenue">KES 0.00</h2>
+        </div>
+
+        <div class="dashboard-card">
+          <small>Cost of Goods Sold</small>
+          <h2 id="reportCost">KES 0.00</h2>
+        </div>
+
+        <div class="dashboard-card">
+          <small>Gross Profit</small>
+          <h2 id="reportProfit">KES 0.00</h2>
+        </div>
+
+        <div class="dashboard-card">
+          <small>Profit Margin</small>
+          <h2 id="reportMargin">0.00%</h2>
+        </div>
+
+        <div class="dashboard-card">
+          <small>Transactions</small>
+          <h2 id="reportTransactions">0</h2>
+        </div>
+
+        <div class="dashboard-card">
+          <small>Units Sold</small>
+          <h2 id="reportUnits">0</h2>
+        </div>
+
+        <div class="dashboard-card">
+          <small>Average Sale</small>
+          <h2 id="reportAverage">KES 0.00</h2>
+        </div>
+
+      </div>
+
+      <div class="dashboard-section" id="salesGrowthSection">
+        <h3>📈 Sales Performance &amp; Growth</h3>
+        <p class="muted">Track whether sales are improving or declining. Today's figure is sales recorded so far today; yesterday's figure is the full previous day.</p>
+        <div class="growth-grid">
+          <div class="growth-card">
+            <small>Yesterday's Sales</small>
+            <strong id="yesterdaySales">KES 0.00</strong>
+            <div class="growth-change growth-neutral" id="yesterdaySalesDate"></div>
+          </div>
+          <div class="growth-card">
+            <small>Today's Sales</small>
+            <strong id="todaySales">KES 0.00</strong>
+            <div class="growth-change growth-neutral" id="todaySalesChange">Awaiting comparison</div>
+          </div>
+          <div class="growth-card">
+            <small>Change: Today vs Yesterday</small>
+            <strong id="dailyGrowthPercent">—</strong>
+            <div class="growth-change growth-neutral" id="dailyGrowthAmount">No comparison yet</div>
+          </div>
+          <div class="growth-card">
+            <small>Month-to-date vs Previous Month (same days)</small>
+            <strong id="monthlyGrowthPercent">—</strong>
+            <div class="growth-change growth-neutral" id="monthlyGrowthAmount">Loading monthly comparison...</div>
+          </div>
+        </div>
+        <h4>Daily Sales Trend</h4>
+        <p class="muted" id="salesTrendCaption">Daily revenue for the selected report period.</p>
+        <div class="sales-chart-wrap">
+          <svg id="salesTrendChart" viewBox="0 0 900 290" role="img" aria-label="Daily sales revenue bar chart"></svg>
+          <div class="chart-legend">Each bar represents total sales revenue for one day. Days with no recorded sales appear as zero.</div>
+        </div>
+      </div>
+
+      <div class="dashboard-section">
+        <h3>Payment Breakdown</h3>
+
+        <table class="dashboard-table">
+          <thead>
+            <tr>
+              <th>Payment Method</th>
+              <th>Amount</th>
+            </tr>
+          </thead>
+          <tbody id="reportPayments"></tbody>
+        </table>
+      </div>
+
+    </div>
+
+    <button class="close-dashboard" onclick="toggleSalesReports()">
+      Close Sales Reports
+    </button>
+  </section>
+
+  <div id="salesWorkspace">
+  <!-- INVENTORY SEARCH -->
+  <section class="panel" id="inventoryPanel">
+    <h3>Find Medicine</h3>
+
+    <input
+      id="search"
+      placeholder="Search medicine..."
+      oninput="renderProducts()"
+    >
+
+    <div id="stockAlertSummary" class="stock-alert-summary" role="status" aria-live="polite"></div>
+    <div id="products">Loading inventory...</div>
+  </section>
+
+  <!-- CURRENT SALE -->
+  <section class="panel" id="cartPanel">
+    <h3>Current Sale</h3>
+
+    <div id="cart">Your cart is empty.</div>
+
+    <p>Total</p>
+    <div class="total" id="total">KES 0.00</div>
+
+    <label for="payment">Payment method</label>
+
+    <select id="payment">
+      <option>Cash</option>
+      <option>M-Pesa</option>
+      <option>Card</option>
+      <option>Other</option>
+    </select>
+
+    <button id="checkout" onclick="checkout()">
+      Complete Sale
+    </button>
+
+    <div id="message"></div>
+
+    <section id="optionalReceiptPanel" class="optional-receipt-panel" aria-live="polite">
+      <h3 style="margin-top:0;color:#087a45">Sale completed</h3>
+      <p class="muted">Would the customer like a printed receipt? Printing is optional; the sale is already saved.</p>
+      <div id="optionalReceiptPreview" class="receipt-preview"></div>
+      <div class="optional-receipt-actions">
+        <button type="button" class="receipt-print-button" onclick="printCurrentReceipt()">🖨 Print Receipt</button>
+        <button type="button" class="receipt-skip-button" onclick="dismissOptionalReceipt()">Skip / Close</button>
+      </div>
+    </section>
+  </section>
+
+  <!-- TOTAL PHYSICAL VALUE OF ALL REMAINING INVENTORY -->
+  <section class="panel" id="inventoryValuePanel">
+    <h3>Total Inventory Value</h3>
+    <p class="muted">Physical stock value: all units remaining in Inventory Column G multiplied by selling price. This includes expired or expiry-unverified stock, which remains blocked from sale.</p>
+    <div class="total" id="inventoryValue">KES 0.00</div>
+    <p class="muted" style="margin-top:8px">Value of saleable, expiry-verified stock: <strong id="saleableInventoryValue">KES 0.00</strong></p>
+  </section>
+  </div>
+
+  <div id="interactionModal" class="interaction-overlay" role="dialog" aria-modal="true" aria-labelledby="interactionTitle">
+    <div class="interaction-dialog">
+      <h2 id="interactionTitle">Combined Medication Safety Check</h2>
+      <p id="interactionIntro"></p>
+      <div id="interactionAlertList"></div>
+      <div id="medicationPrecautionList"></div>
+      <div id="interactionUnscreened"></div>
+      <p class="interaction-note"><strong>Important:</strong> This is a limited offline screening aid, not a complete interaction or patient-specific safety checker. It checks only medicines in this cart. It does not know the patient’s age, pregnancy trimester, breastfeeding status, home medicines, allergies, diagnoses, renal/hepatic function or laboratory results. Ask only the relevant brief safety questions when an alert appears, and verify against current product information. No alert does not guarantee safety.</p>
+      <div class="interaction-actions">
+        <button id="interactionProceed" class="interaction-proceed" onclick="confirmInteractionAndCheckout()">Proceed after review</button>
+        <button class="interaction-cancel" onclick="cancelInteractionCheckout()">Cancel sale</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+
+  let products = [];
+  let cart = [];
+  let pendingInteractionReview = null;
+
+  // ================= BULK STOCK RECEIVING (ADMIN ONLY) =================
+  let bulkReceivingRowsInitialised = false;
+
+  function renderBulkReceivingRows() {
+    const tbody = document.getElementById('bulkReceivingRows');
+    const datalist = document.getElementById('bulkMedicineOptions');
+    if (!tbody || !datalist) return;
+    datalist.innerHTML = products.map(p => `<option value="${escapeHtml(p.name)}"></option>`).join('');
+    tbody.innerHTML = Array.from({length:20}, (_, index) => `
+      <tr>
+        <td>${index + 1}</td>
+        <td><input class="bulk-medicine" list="bulkMedicineOptions" data-row="${index}" placeholder="Medicine name" autocomplete="off" oninput="updateBulkRowFields(${index})"></td>
+        <td><input class="bulk-quantity" type="number" min="-1000000" max="1000000" step="0.001" placeholder="+ receipt / - variance"></td>
+        <td><input class="bulk-expiry" type="date"></td>
+        <td><input class="bulk-buying" type="number" min="0.01" step="0.01" placeholder="KES" disabled></td>
+        <td><input class="bulk-selling" type="number" min="0.01" step="0.01" placeholder="KES" disabled></td>
+      </tr>
+    `).join('');
+    bulkReceivingRowsInitialised = true;
+  }
+
+  function updateBulkRowFields(index) {
+    const row = document.querySelectorAll('#bulkReceivingRows tr')[index];
+    if (!row) return;
+    const name = String(row.querySelector('.bulk-medicine').value || '').trim().toLowerCase();
+    const existing = products.some(p => String(p.name || '').trim().toLowerCase() === name);
+    const buying = row.querySelector('.bulk-buying');
+    const selling = row.querySelector('.bulk-selling');
+    buying.disabled = !name || existing;
+    selling.disabled = !name || existing;
+    if (existing) { buying.value = ''; selling.value = ''; }
+  }
+
+  function clearBulkReceivingRows() {
+    renderBulkReceivingRows();
+    document.getElementById('bulkReceivingStatus').textContent = 'All 20 rows have been cleared.';
+    document.getElementById('stockReceivingGlobalStatus').textContent = '';
+  }
+
+  function saveBulkStockReceipt() {
+    const status = document.getElementById('bulkReceivingStatus');
+    const button = document.getElementById('saveBulkStockButton');
+    if (!currentUser || currentUser.role !== 'ADMIN') {
+      status.textContent = 'Admin permission is required.';
+      return;
+    }
+    const rows = Array.from(document.querySelectorAll('#bulkReceivingRows tr'));
+    const entries = [];
+    for (let i = 0; i < rows.length; i++) {
+      const row = rows[i];
+      const medicineName = String(row.querySelector('.bulk-medicine').value || '').trim();
+      const quantityText = row.querySelector('.bulk-quantity').value;
+      const expiryDate = row.querySelector('.bulk-expiry').value;
+      const buyingText = row.querySelector('.bulk-buying').value;
+      const sellingText = row.querySelector('.bulk-selling').value;
+      if (!medicineName && !quantityText && !expiryDate && !buyingText && !sellingText) continue;
+      if (!medicineName) { status.textContent = `Row ${i + 1}: enter a medicine name.`; return; }
+      const quantity = Number(quantityText);
+      const existing = products.some(p => String(p.name || '').trim().toLowerCase() === medicineName.toLowerCase());
+      if (!Number.isFinite(quantity) || quantity === 0) { status.textContent = `Row ${i + 1} (${medicineName}): enter a non-zero quantity.`; return; }
+      if (quantity > 0 && !Number.isInteger(quantity)) { status.textContent = `Row ${i + 1} (${medicineName}): positive receipts must be whole numbers.`; return; }
+      if (quantity < 0 && !existing) { status.textContent = `Row ${i + 1} (${medicineName}): variance adjustments are only allowed for existing medicines.`; return; }
+      if (quantity < 0 && Math.abs(quantity * 1000 - Math.round(quantity * 1000)) > 0.000001) { status.textContent = `Row ${i + 1} (${medicineName}): negative variance quantities may have up to 3 decimal places.`; return; }
+      if (quantity > 0 && !expiryDate) { status.textContent = `Row ${i + 1} (${medicineName}): select an expiry date for a positive receipt.`; return; }
+      if (quantity < 0 && expiryDate) { status.textContent = `Row ${i + 1} (${medicineName}): leave expiry blank for a negative variance adjustment.`; return; }
+      const entry = { medicineName, quantity, expiryDate };
+      if (!existing) {
+        entry.buyingPrice = Number(buyingText);
+        entry.sellingPrice = Number(sellingText);
+        if (!(entry.buyingPrice > 0) || !(entry.sellingPrice > 0)) {
+          status.textContent = `Row ${i + 1} (${medicineName}): buying and selling prices are required for a new medicine.`;
+          return;
+        }
+      }
+      entries.push(entry);
+    }
+    if (!entries.length) { status.textContent = 'Enter at least one medicine before saving.'; return; }
+    if (entries.length > 20) { status.textContent = 'A maximum of 20 medicines can be received at once.'; return; }
+
+    button.disabled = true;
+    status.textContent = `Validating and saving ${entries.length} stock entr${entries.length === 1 ? 'y' : 'ies'}... Please do not close this page.`;
+    document.getElementById('stockReceivingGlobalStatus').textContent = '';
+    google.script.run
+      .withSuccessHandler(result => {
+        const refs = (result.entries || []).map(item => `${item.medicineName} (${item.quantity > 0 ? '+' : ''}${item.quantity}; ${item.entryType}): ${item.reference}`).join(' | ');
+        const confirmation = `${result.message} Received by ${result.receivedBy} at ${result.receivedAt}. References: ${refs}`;
+        status.textContent = confirmation;
+        document.getElementById('stockReceivingGlobalStatus').textContent = confirmation;
+        renderBulkReceivingRows();
+        loadProducts();
+        document.getElementById('stockAuditEnd').value = localDateTimeInputValue(new Date());
+        loadStockReceivingHistory();
+        button.disabled = false;
+      })
+      .withFailureHandler(error => {
+        status.textContent = 'Bulk stock receiving failed: ' + (error && error.message ? error.message : error);
+        button.disabled = false;
+      })
+      .recordBulkStockReceipt({entries}, authToken);
+  }
+
+  function loadStockReceivingHistory() {
+    if (!currentUser || currentUser.role !== 'ADMIN') return;
+    const start = document.getElementById('stockAuditStart').value;
+    const end = document.getElementById('stockAuditEnd').value;
+    const status = document.getElementById('stockAuditStatus');
+    const results = document.getElementById('stockAuditResults');
+    const button = document.getElementById('loadStockAuditButton');
+    if (!start || !end) {
+      status.textContent = 'Select both the start and end date/time.';
+      results.innerHTML = '';
+      return;
+    }
+    if (start > end) {
+      status.textContent = 'The start date/time cannot be after the end date/time.';
+      results.innerHTML = '';
+      return;
+    }
+    button.disabled = true;
+    status.textContent = 'Retrieving stock receiving history...';
+    results.innerHTML = '';
+    google.script.run
+      .withSuccessHandler(entries => {
+        const rows = Array.isArray(entries) ? entries : [];
+        if (!rows.length) {
+          status.textContent = 'No stock receiving entries were found within this date/time range.';
+          button.disabled = false;
+          return;
+        }
+        status.textContent = `${rows.length} stock receiving entr${rows.length === 1 ? 'y' : 'ies'} found. Latest entries appear first.`;
+        results.innerHTML = `
+          <table class="receiving-audit-table">
+            <thead><tr><th>Date/time received</th><th>Reference</th><th>Medicine</th><th>Qty received / variance (+/-)</th><th>Expiry</th><th>Received by</th><th>Entry type</th></tr></thead>
+            <tbody>${rows.map(entry => `
+              <tr><td>${escapeHtml(entry.timestamp)}</td><td>${escapeHtml(entry.reference)}</td><td>${escapeHtml(entry.medicine)}</td><td>${Number(entry.quantity) || 0}</td><td>${escapeHtml(entry.expiryDate)}</td><td>${escapeHtml(entry.receivedBy)}</td><td>${escapeHtml(entry.entryType)}</td></tr>
+            `).join('')}</tbody>
+          </table>`;
+        button.disabled = false;
+      })
+      .withFailureHandler(error => {
+        status.textContent = 'Unable to retrieve receiving history: ' + error.message;
+        button.disabled = false;
+      })
+      .getStockReceivingHistory(start, end, authToken);
+  }
+
+  // COMMON MONEY FORMAT
+  let authToken = '';
+  let currentUser = null;
+  let selectedReceiptForReversal = '';
+  let expiryBatchCache = {};
+  function showAuthMessage(message) { document.getElementById('authMessage').textContent = message || ''; }
+  function initialiseAuth() {
+    google.script.run.withSuccessHandler(status => {
+      document.getElementById('setupFields').style.display = status.setupRequired ? 'block' : 'none';
+      document.getElementById('loginFields').style.display = status.setupRequired ? 'none' : 'block';
+    }).withFailureHandler(e => showAuthMessage(e.message)).authStatus();
+  }
+  let passwordResetToken = '';
+  function showLoginFields() {
+    ['setupFields','forgotFields','emailResetFields','forcedPasswordFields'].forEach(id => document.getElementById(id).style.display='none');
+    document.getElementById('loginFields').style.display='block';
+    showAuthMessage('');
+  }
+  function showForgotPassword() {
+    ['setupFields','loginFields','emailResetFields','forcedPasswordFields'].forEach(id => document.getElementById(id).style.display='none');
+    document.getElementById('forgotFields').style.display='block';
+    showAuthMessage('');
+  }
+  function initialiseAuth() {
+    // Prefer the token supplied by doGet(e); fall back to the browser URL.
+    // The server-side value covers email clients that alter URL navigation.
+    const serverResetToken = <?!= JSON.stringify(resetToken || '') ?>;
+    const urlToken = serverResetToken || new URLSearchParams(window.location.search).get('reset');
+    if (urlToken) {
+      passwordResetToken = urlToken;
+      ['setupFields','loginFields','forgotFields','forcedPasswordFields'].forEach(id => document.getElementById(id).style.display='none');
+      document.getElementById('emailResetFields').style.display='block';
+      return;
+    }
+
+    // Restore the existing server session after refresh. Explicit Logout removes
+    // both this browser token and the server-side session.
+    const savedToken = localStorage.getItem('afiamedsToken');
+    if (savedToken) {
+      showAuthMessage('Restoring your Afiameds session...');
+      google.script.run.withSuccessHandler(result => {
+        acceptLogin(result);
+      }).withFailureHandler(() => {
+        localStorage.removeItem('afiamedsToken');
+        authToken = ''; currentUser = null;
+        google.script.run.withSuccessHandler(status => {
+          document.getElementById('setupFields').style.display = status.setupRequired ? 'block' : 'none';
+          document.getElementById('loginFields').style.display = status.setupRequired ? 'none' : 'block';
+          showAuthMessage('Your previous session is no longer valid. Please log in.');
+        }).withFailureHandler(e => showAuthMessage(e.message)).authStatus();
+      }).restoreLoginSession(savedToken);
+      return;
+    }
+
+    google.script.run.withSuccessHandler(status => {
+      document.getElementById('setupFields').style.display = status.setupRequired ? 'block' : 'none';
+      document.getElementById('loginFields').style.display = status.setupRequired ? 'none' : 'block';
+    }).withFailureHandler(e => showAuthMessage(e.message)).authStatus();
+  }
+  function acceptLogin(result) {
+    authToken = result.token; currentUser = result.user;
+    localStorage.setItem('afiamedsToken', authToken);
+    if (currentUser.mustChangePassword) {
+      document.getElementById('authScreen').style.display='flex';
+      document.getElementById('appContent').style.display='none';
+      ['setupFields','loginFields','forgotFields','emailResetFields'].forEach(id => document.getElementById(id).style.display='none');
+      document.getElementById('forcedPasswordFields').style.display='block';
+      showAuthMessage('Please change your temporary password to continue.');
+      return;
+    }
+    finishLoginUI();
+  }
+  function finishLoginUI() {
+    document.getElementById('authScreen').style.display = 'none';
+    document.getElementById('appContent').style.display = 'grid';
+    document.getElementById('welcomeUser').textContent = 'Welcome, ' + currentUser.displayName + ' (' + currentUser.role + ')';
+    document.querySelectorAll('[data-admin-only="true"]').forEach(el => el.style.display = currentUser.role === 'ADMIN' ? '' : 'none');
+    document.getElementById('expiredWriteoffPanel').style.display = currentUser.role === 'ADMIN' ? 'block' : 'none';
+    document.getElementById('staffPanel').style.display = 'none';
+    loadProducts();
+    const today = localDateString(new Date());
+    document.getElementById('reportStart').value = today; document.getElementById('reportEnd').value = today;
+    document.getElementById('historyDate').value = today; document.getElementById('historyMonth').value = today.substring(0,7);
+    const auditStart = new Date(); auditStart.setHours(0, 0, 0, 0);
+    document.getElementById('stockAuditStart').value = localDateTimeInputValue(auditStart);
+    document.getElementById('stockAuditEnd').value = localDateTimeInputValue(new Date());
+    document.getElementById('stockReceivingPanel').style.display = 'none';
+    document.getElementById('expiryManagement').style.display = 'none';
+    document.getElementById('expiryManagementButton').textContent = '⏳ Expiry Management';
+  }
+  function toggleStaffManagement() {
+    if (!currentUser || currentUser.role !== 'ADMIN') return;
+    const panel = document.getElementById('staffPanel');
+    const button = document.getElementById('staffManageButton');
+    const isOpen = panel.style.display === 'block';
+    panel.style.display = isOpen ? 'none' : 'block';
+    button.textContent = isOpen ? '👥 Staff Account Management' : '✖ Close Staff Management';
+    if (!isOpen) {
+      document.getElementById('salesReports').style.display = 'none';
+      document.getElementById('salesReportsButton').textContent = '📅 Sales Reports';
+      document.getElementById('stockReceivingPanel').style.display = 'none';
+      document.getElementById('stockReceivingButton').textContent = '📦 Stock Receiving';
+      refreshStaffList();
+    }
+  }
+  function toggleStockReceiving() {
+    if (!currentUser || currentUser.role !== 'ADMIN') return;
+    const panel = document.getElementById('stockReceivingPanel');
+    const button = document.getElementById('stockReceivingButton');
+    const isOpen = panel.style.display === 'block';
+    if (isOpen) {
+      panel.style.display = 'none';
+      button.textContent = '📦 Stock Receiving';
+      return;
+    }
+    document.getElementById('staffPanel').style.display = 'none';
+    document.getElementById('staffManageButton').textContent = '👥 Staff Account Management';
+    document.getElementById('salesReports').style.display = 'none';
+    document.getElementById('salesReportsButton').textContent = '📅 Sales Reports';
+    panel.style.display = 'block';
+    button.textContent = '✖ Close Stock Receiving';
+    if (!bulkReceivingRowsInitialised) renderBulkReceivingRows();
+  }
+  function firstAdminSetup() {
+    showAuthMessage('Creating Admin account...');
+    google.script.run.withSuccessHandler(acceptLogin).withFailureHandler(e => showAuthMessage(e.message))
+      .setupFirstAdmin(document.getElementById('setupUsername').value, document.getElementById('setupName').value, document.getElementById('setupPassword').value);
+  }
+  function signIn() {
+    showAuthMessage('Signing in...');
+    google.script.run.withSuccessHandler(acceptLogin).withFailureHandler(e => showAuthMessage(e.message))
+      .login(document.getElementById('loginUsername').value, document.getElementById('loginPassword').value);
+  }
+  function requestForgotPassword() {
+    const email = document.getElementById('forgotEmail').value.trim();
+    if (!email) { showAuthMessage('Enter your registered email address.'); return; }
+    showAuthMessage('Checking the registered email and sending a secure reset link...');
+    google.script.run.withSuccessHandler(r => showAuthMessage(r.message)).withFailureHandler(e => showAuthMessage(e.message))
+      .requestPasswordReset(email);
+  }
+  function submitEmailPasswordReset() {
+    const password = document.getElementById('emailNewPassword').value;
+    const confirm = document.getElementById('emailConfirmPassword').value;
+    if (password.length < 8) { showAuthMessage('Password must be at least 8 characters.'); return; }
+    if (password !== confirm) { showAuthMessage('The passwords do not match.'); return; }
+    showAuthMessage('Resetting password...');
+    google.script.run.withSuccessHandler(() => {
+      passwordResetToken = '';
+      showAuthMessage('Password reset successfully. You can now log in with your new password.');
+      document.getElementById('emailResetFields').style.display='none';
+      document.getElementById('loginFields').style.display='block';
+      try { window.history.replaceState({}, document.title, window.location.pathname); } catch (e) {}
+    }).withFailureHandler(e => showAuthMessage(e.message)).resetPasswordWithToken(passwordResetToken, password);
+  }
+  function submitFirstLoginPasswordChange() {
+    const password = document.getElementById('firstLoginNewPassword').value;
+    const confirm = document.getElementById('firstLoginConfirmPassword').value;
+    if (password.length < 8) { showAuthMessage('Password must be at least 8 characters.'); return; }
+    if (password !== confirm) { showAuthMessage('The passwords do not match.'); return; }
+    showAuthMessage('Saving your new password...');
+    google.script.run.withSuccessHandler(() => {
+      currentUser.mustChangePassword = false;
+      showAuthMessage('Password updated. Opening Afiameds POS...');
+      finishLoginUI();
+    }).withFailureHandler(e => showAuthMessage(e.message)).changeOwnPassword(authToken, password);
+  }
+  function signOut() {
+    const old = authToken; authToken = ''; currentUser = null; localStorage.removeItem('afiamedsToken');
+    google.script.run.withSuccessHandler(() => location.reload()).withFailureHandler(() => location.reload()).logout(old);
+  }
+  function createPharmacist() {
+    const status = document.getElementById('staffStatus');
+    status.textContent='Creating account and sending login details...';
+    google.script.run.withSuccessHandler(() => {
+      status.textContent='Pharmacist account created. Username and temporary password emailed successfully.';
+      ['newStaffName','newStaffUsername','newStaffEmail','newStaffPassword'].forEach(id => document.getElementById(id).value='');
+      refreshStaffList();
+    }).withFailureHandler(e => status.textContent=e.message)
+      .createStaffAccount(authToken, document.getElementById('newStaffUsername').value, document.getElementById('newStaffName').value, document.getElementById('newStaffPassword').value, document.getElementById('newStaffEmail').value);
+  }
+  function refreshStaffList(afterRefresh) {
+    google.script.run.withSuccessHandler(users => {
+      document.getElementById('staffList').innerHTML = users.map(u => {
+        const accountLabel = u.role === 'ADMIN' ? 'Admin — Company recovery email' : 'Pharmacist recovery email';
+        const emailLabel = u.email ? `${accountLabel}: ${escapeHtml(u.email)}` : 'No recovery email registered';
+        return `<p>${escapeHtml(u.displayName)} (${escapeHtml(u.username)}) — ${u.active?'Active':'Inactive'} — ${emailLabel} ${u.role==='PHARMACIST'?`<button onclick="toggleStaff('${escapeHtml(u.username)}',${!u.active})">${u.active?'Deactivate':'Activate'}</button>`:''}</p>`;
+      }).join('');
+      if (typeof afterRefresh === 'function') afterRefresh(users);
+    }).withFailureHandler(e => {
+      document.getElementById('staffStatus').textContent='Could not refresh staff list: ' + e.message;
+      if (typeof afterRefresh === 'function') afterRefresh(null, e);
+    }).listStaffAccounts(authToken);
+  }
+  function toggleStaff(username, active) {
+    google.script.run.withSuccessHandler(refreshStaffList).withFailureHandler(e => document.getElementById('staffStatus').textContent=e.message).setStaffActive(authToken,username,active);
+  }
+  function resetPharmacistPassword() {
+    const username = document.getElementById('resetStaffUsername').value.trim();
+    if (!username) { document.getElementById('staffStatus').textContent='Enter the staff username.'; return; }
+    document.getElementById('staffStatus').textContent='Sending secure reset link...';
+    google.script.run.withSuccessHandler(() => { document.getElementById('staffStatus').textContent='Google accepted the reset email for sending. Ask the staff member to check Inbox, Spam and Promotions.'; })
+      .withFailureHandler(e => document.getElementById('staffStatus').textContent='Reset email was NOT sent: ' + e.message)
+      .adminResetStaffPassword(authToken, username);
+  }
+  function testAfiamedsEmailDelivery() {
+    const status = document.getElementById('staffStatus');
+    status.textContent='Testing Google Apps Script email delivery...';
+    google.script.run.withSuccessHandler(result => {
+      status.textContent=result.message + ' Sender: ' + result.sender + '. Remaining daily recipient quota: ' + result.remainingQuota + '.';
+    }).withFailureHandler(e => {
+      status.textContent='EMAIL TEST FAILED: ' + e.message;
+    }).adminTestRecoveryEmail(authToken);
+  }
+  function saveStaffEmail() {
+    const username = document.getElementById('updateStaffEmailUsername').value.trim();
+    const email = document.getElementById('updateStaffEmailAddress').value.trim();
+    const status = document.getElementById('staffStatus');
+    if (!username || !email) { status.textContent='Enter both the Pharmacist username and recovery email.'; return; }
+    status.textContent='Saving and verifying the Pharmacist recovery email...';
+    google.script.run.withSuccessHandler(result => {
+      refreshStaffList((users, refreshError) => {
+        if (refreshError || !users) return;
+        const saved = users.find(u => String(u.username).toLowerCase() === String(result.username).toLowerCase());
+        if (saved && String(saved.email || '').toLowerCase() === String(result.email).toLowerCase()) {
+          status.textContent='Verified: recovery email for ' + result.username + ' is now ' + result.email + '.';
+          document.getElementById('updateStaffEmailAddress').value='';
+        } else {
+          status.textContent='The server saved the email, but the refreshed staff list did not match. Reload the POS and check the AFiAMEDS USERS sheet, column H.';
+        }
+      });
+    }).withFailureHandler(e => { status.textContent='Recovery email was NOT confirmed as saved: ' + e.message; })
+      .updateStaffEmail(authToken, username, email);
+  }
+
+  function money(value) {
+    return 'KES ' + Number(value || 0).toLocaleString('en-KE', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+  }
+
+  // LOCAL DATE FORMAT
+  function localDateString(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+
+    return year + '-' + month + '-' + day;
+  }
+
+  // OPEN AND CLOSE SALES REPORTS
+  function toggleSalesReports() {
+    const reports = document.getElementById('salesReports');
+    const button = document.getElementById('salesReportsButton');
+
+    const isOpen = reports.style.display === 'block';
+
+    if (isOpen) {
+      reports.style.display = 'none';
+      button.textContent = '📅 Sales Reports';
+    } else {
+      document.getElementById('staffPanel').style.display = 'none';
+      document.getElementById('staffManageButton').textContent = '👥 Staff Account Management';
+      document.getElementById('stockReceivingPanel').style.display = 'none';
+      document.getElementById('stockReceivingButton').textContent = '📦 Stock Receiving';
+      reports.style.display = 'block';
+      button.textContent = '✖ Close Sales Reports';
+    }
+  }
+
+  // SET REPORT PERIOD
+  function setReportPeriod(period) {
+    const today = new Date();
+    const end = localDateString(today);
+    let startDate = new Date(today);
+
+    if (period === 'daily') {
+      // Today only
+    }
+
+    if (period === 'weekly') {
+      const day = today.getDay();
+      const daysSinceMonday = (day + 6) % 7;
+
+      startDate.setDate(today.getDate() - daysSinceMonday);
+    }
+
+    if (period === 'monthly') {
+      startDate = new Date(
+        today.getFullYear(),
+        today.getMonth(),
+        1
+      );
+    }
+
+    document.getElementById('reportStart').value =
+      localDateString(startDate);
+
+    document.getElementById('reportEnd').value = end;
+
+    generateSalesReport();
+  }
+
+  // GENERATE SALES REPORT
+  function generateSalesReport() {
+    const startDate = document.getElementById('reportStart').value;
+    const endDate = document.getElementById('reportEnd').value;
+    const status = document.getElementById('reportStatus');
+    const results = document.getElementById('reportResults');
+    const button = document.getElementById('generateReportButton');
+
+    if (!startDate || !endDate) {
+      status.textContent = 'Please select both dates.';
+      results.style.display = 'none';
+      return;
+    }
+
+    if (startDate > endDate) {
+      status.textContent = 'Start date cannot be after end date.';
+      results.style.display = 'none';
+      return;
+    }
+
+    button.disabled = true;
+    status.textContent = 'Generating report...';
+    results.style.display = 'none';
+
+    google.script.run
+      .withSuccessHandler(data => {
+        document.getElementById('reportRevenue').textContent =
+          money(data.revenue);
+
+        document.getElementById('reportCost').textContent =
+          money(data.costOfGoods);
+
+        document.getElementById('reportProfit').textContent =
+          money(data.grossProfit);
+
+        document.getElementById('reportMargin').textContent =
+          Number(data.profitMargin || 0).toFixed(2) + '%';
+
+        document.getElementById('reportTransactions').textContent =
+          data.transactions || 0;
+
+        document.getElementById('reportUnits').textContent =
+          data.units || 0;
+
+        document.getElementById('reportAverage').textContent =
+          money(data.averageSale);
+
+        document.getElementById('reportHeading').textContent =
+          'Report: ' + startDate + ' to ' + endDate;
+
+        // Render daily growth comparisons and the selected-period sales chart.
+        const comparison = data.todayYesterday || {};
+        document.getElementById('yesterdaySales').textContent = money(comparison.yesterday || 0);
+        document.getElementById('todaySales').textContent = money(comparison.today || 0);
+        document.getElementById('yesterdaySalesDate').textContent = comparison.yesterdayDate || '';
+        document.getElementById('todaySalesChange').textContent = comparison.todayDate || '';
+        setGrowthDisplay('dailyGrowthPercent', 'dailyGrowthAmount',
+          comparison.percentageChange, comparison.difference,
+          comparison.yesterday > 0 ? 'vs yesterday' : 'No sales baseline yesterday');
+
+        const monthComparison = data.monthComparison || {};
+        setGrowthDisplay('monthlyGrowthPercent', 'monthlyGrowthAmount',
+          monthComparison.percentageChange, monthComparison.difference,
+          (monthComparison.currentMonthLabel || 'This month') + ' vs ' +
+          (monthComparison.previousMonthLabel || 'previous month') +
+          ' (same elapsed days)');
+        renderSalesTrend(data.dailySales || []);
+
+        const payments = data.payments || {};
+
+        document.getElementById('reportPayments').innerHTML =
+          Object.entries(payments).map(([method, amount]) => `
+            <tr>
+              <td>${escapeHtml(method)}</td>
+              <td>${money(amount)}</td>
+            </tr>
+          `).join('') ||
+          '<tr><td colspan="2">No payments recorded for this period.</td></tr>';
+
+        results.style.display = 'block';
+        status.textContent = 'Report generated successfully.';
+        button.disabled = false;
+      })
+      .withFailureHandler(error => {
+        status.textContent =
+          'Unable to generate report: ' + error.message;
+
+        button.disabled = false;
+      })
+      .getSalesReport(startDate, endDate, authToken);
+  }
+
+  function setGrowthDisplay(percentId, amountId, percentage, difference, context) {
+    const percentEl = document.getElementById(percentId);
+    const amountEl = document.getElementById(amountId);
+    percentEl.className = '';
+    amountEl.className = 'growth-change';
+    if (percentage === null || percentage === undefined || !Number.isFinite(Number(percentage))) {
+      percentEl.textContent = '—';
+      amountEl.textContent = context + ': percentage unavailable';
+      amountEl.classList.add('growth-neutral');
+      return;
+    }
+    const value = Number(percentage);
+    const sign = value > 0 ? '+' : '';
+    percentEl.textContent = sign + value.toFixed(2) + '%';
+    amountEl.textContent = (Number(difference) > 0 ? '+' : '') + money(difference || 0) + ' ' + context;
+    const className = value > 0 ? 'growth-up' : (value < 0 ? 'growth-down' : 'growth-neutral');
+    percentEl.classList.add(className);
+    amountEl.classList.add(className);
+  }
+
+  function renderSalesTrend(dailySales) {
+    const svg = document.getElementById('salesTrendChart');
+    const caption = document.getElementById('salesTrendCaption');
+    if (!Array.isArray(dailySales) || !dailySales.length) {
+      svg.innerHTML = '<text x="450" y="145" text-anchor="middle" fill="#65756b" font-size="16">No sales data for this period</text>';
+      caption.textContent = 'No daily sales to display.';
+      return;
+    }
+    const width = 900, height = 290, left = 58, right = 20, top = 18, bottom = 52;
+    const plotWidth = width - left - right, plotHeight = height - top - bottom;
+    const maxValue = Math.max(1, ...dailySales.map(item => Number(item.revenue) || 0));
+    const slot = plotWidth / dailySales.length;
+    const barWidth = Math.max(3, Math.min(34, slot * 0.68));
+    let markup = '';
+    for (let i = 0; i <= 4; i++) {
+      const y = top + plotHeight - (plotHeight * i / 4);
+      const value = maxValue * i / 4;
+      markup += `<line x1="${left}" y1="${y}" x2="${width-right}" y2="${y}" stroke="#e6eee8" stroke-width="1"/>`;
+      markup += `<text x="${left-8}" y="${y+4}" text-anchor="end" fill="#65756b" font-size="10">${Math.round(value).toLocaleString()}</text>`;
+    }
+    dailySales.forEach((item, index) => {
+      const value = Math.max(0, Number(item.revenue) || 0);
+      const barHeight = value / maxValue * plotHeight;
+      const x = left + index * slot + (slot - barWidth) / 2;
+      const y = top + plotHeight - barHeight;
+      const dayLabel = String(item.date || '').slice(8, 10);
+      const labelEvery = dailySales.length > 40 ? 5 : (dailySales.length > 20 ? 3 : (dailySales.length > 10 ? 2 : 1));
+      markup += `<rect x="${x}" y="${y}" width="${barWidth}" height="${Math.max(0,barHeight)}" rx="3" fill="#087a45"><title>${escapeHtml(item.date)}: ${money(value)}</title></rect>`;
+      if (index % labelEvery === 0 || index === dailySales.length - 1) {
+        markup += `<text x="${left + index * slot + slot/2}" y="${height-25}" text-anchor="middle" fill="#65756b" font-size="10">${dayLabel}</text>`;
+      }
+    });
+    markup += `<text x="${width/2}" y="${height-5}" text-anchor="middle" fill="#65756b" font-size="11">Day of month</text>`;
+    svg.innerHTML = markup;
+    caption.textContent = dailySales.length + ' days shown · Revenue in KES · Selected report period';
+  }
+
+  // EXPIRY MANAGEMENT (available to both Admin and Pharmacist)
+  function toggleExpiryManagement() {
+    const panel = document.getElementById('expiryManagement');
+    const button = document.getElementById('expiryManagementButton');
+    const opening = panel.style.display !== 'block';
+    panel.style.display = opening ? 'block' : 'none';
+    button.textContent = opening ? '✖ Close Expiry Management' : '⏳ Expiry Management';
+    if (opening) {
+      document.getElementById('dashboard').style.display = 'none';
+      document.getElementById('salesReports').style.display = 'none';
+      document.getElementById('staffPanel').style.display = 'none';
+      document.getElementById('stockReceivingPanel').style.display = 'none';
+      loadExpiryOverview();
+    }
+  }
+
+  function loadExpiryOverview() {
+    const status = document.getElementById('expiryStatus');
+    const results = document.getElementById('expiryResults');
+    status.textContent = 'Checking batch expiry dates...';
+    google.script.run.withSuccessHandler(data => {
+      const batches = data.batches || [];
+      document.getElementById('expiryExpiredCount').textContent = data.counts.expired || 0;
+      document.getElementById('expiry30Count').textContent = data.counts.within30 || 0;
+      document.getElementById('expiry180Count').textContent = data.counts.within180 || 0;
+      document.getElementById('expiryUnknownCount').textContent = data.counts.unverified || 0;
+      expiryBatchCache = {};
+      batches.forEach(b => { expiryBatchCache[b.batchId] = b; });
+      if (!batches.length) {
+        results.innerHTML = '<p style="padding:12px">No remaining batches are expired or due to expire within the next six months. No undated batches were found.</p>';
+      } else {
+        const admin = currentUser && currentUser.role === 'ADMIN';
+        results.innerHTML = `<table class="expiry-table"><thead><tr><th>Medicine</th><th>Batch reference</th><th>Remaining units</th><th>Expiry date</th><th>Days remaining</th><th>Status</th>${admin ? '<th>Remove qty</th><th>Cost value (KES)</th><th>Potential sale value (KES)</th>' : ''}</tr></thead><tbody>${batches.map(b => {
+          const cls = b.status === 'EXPIRED' ? 'expiry-expired' : b.status === 'UNVERIFIED' ? 'expiry-expired' : b.daysRemaining <= 30 ? 'expiry-soon' : 'expiry-ok';
+          const days = b.daysRemaining === null ? '—' : b.daysRemaining < 0 ? Math.abs(b.daysRemaining) + ' days overdue' : b.daysRemaining + ' days';
+          const removal = admin && b.status === 'EXPIRED' ? `<td><input class="writeoff-select" type="checkbox" data-batch="${escapeHtml(b.batchId)}" onchange="updateWriteoffPreview()"> <input class="writeoff-qty" type="number" min="1" max="${b.quantity}" value="${b.quantity}" data-batch="${escapeHtml(b.batchId)}" style="width:72px" onchange="updateWriteoffPreview()"></td><td>${money(b.quantity*b.buyingPrice)}</td><td>${money(b.quantity*b.sellingPrice)}</td>` : admin ? '<td colspan="3">Not eligible for write-off</td>' : '';
+          return `<tr><td><strong>${escapeHtml(b.medicine)}</strong></td><td>${escapeHtml(b.reference || b.batchId)}</td><td>${b.quantity}</td><td>${escapeHtml(b.expiryDate || 'Not recorded')}</td><td>${days}</td><td class="${cls}">${escapeHtml(b.status)}</td>${removal}</tr>`;
+        }).join('')}</tbody></table>`;
+      }
+      updateWriteoffPreview();
+      status.textContent = 'As at ' + data.today + '. Showing expired, unverified and batches expiring within 180 days. Expired and undated stock is blocked at checkout.';
+    }).withFailureHandler(error => {
+      status.textContent = 'Could not load expiry information: ' + error.message;
+      results.innerHTML = '';
+    }).getExpiryOverview(authToken);
+  }
+
+  function updateWriteoffPreview() {
+    const selected = Array.from(document.querySelectorAll('.writeoff-select:checked'));
+    let units = 0, cost = 0, potential = 0;
+    selected.forEach(box => {
+      const batch = expiryBatchCache[box.dataset.batch];
+      const qtyInput = document.querySelector(`.writeoff-qty[data-batch="${CSS.escape(box.dataset.batch)}"]`);
+      const qty = Math.max(0, Math.min(Number(batch && batch.quantity) || 0, Math.floor(Number(qtyInput && qtyInput.value) || 0)));
+      if (batch) { units += qty; cost += qty * (Number(batch.buyingPrice) || 0); potential += qty * (Number(batch.sellingPrice) || 0); }
+    });
+    const preview = document.getElementById('writeoffPreview');
+    if (preview) preview.textContent = `Selected: ${units} units · Cost value: ${money(cost)} · Potential selling value: ${money(potential)}`;
+  }
+
+  function submitExpiredWriteoff() {
+    if (!currentUser || currentUser.role !== 'ADMIN') { alert('Admin permission is required.'); return; }
+    const selected = Array.from(document.querySelectorAll('.writeoff-select:checked'));
+    if (!selected.length) { alert('Select at least one expired batch and enter the quantity removed.'); return; }
+    const items = selected.map(box => {
+      const input = document.querySelector(`.writeoff-qty[data-batch="${CSS.escape(box.dataset.batch)}"]`);
+      return {batchId:box.dataset.batch,quantity:Number(input && input.value)};
+    });
+    const reason = document.getElementById('writeoffReason').value.trim();
+    if (reason.length < 5) { alert('Enter a reason of at least 5 characters.'); return; }
+    const status = document.getElementById('writeoffStatus');
+    const button = document.getElementById('submitExpiredWriteoff');
+    if (!confirm('Confirm that the selected expired medicines have already been physically removed from the shelves? This will reduce inventory and create a permanent write-off record.')) return;
+    button.disabled = true; status.textContent = 'Recording expired stock removal...';
+    google.script.run.withSuccessHandler(result => {
+      button.disabled = false;
+      status.textContent = `Recorded successfully. Reference: ${result.reference}. ${result.lines} batch line(s), ${result.quantity} unit(s). Cost value written off: ${money(result.costValue)}. Potential selling value: ${money(result.potentialValue)}.`;
+      document.getElementById('writeoffReason').value = '';
+      loadExpiryOverview();
+      loadProducts();
+    }).withFailureHandler(error => {
+      button.disabled = false;
+      status.textContent = 'Write-off failed: ' + error.message;
+    }).writeOffExpiredBatches(items, reason, authToken);
+  }
+
+  // LOAD INVENTORY
+  function loadProducts() {
+    const container = document.getElementById('products');
+    container.textContent = 'Loading inventory...';
+
+    google.script.run
+      .withSuccessHandler(data => {
+        products = Array.isArray(data) ? data : [];
+        updateInventoryValue();
+        renderProducts();
+        if (bulkReceivingRowsInitialised) {
+          const datalist = document.getElementById('bulkMedicineOptions');
+          if (datalist) datalist.innerHTML = products.map(p => `<option value="${escapeHtml(p.name)}"></option>`).join('');
+        }
+
+        if (products.length === 0) {
+          container.textContent = 'No medicines found in inventory.';
+        }
+      })
+      .withFailureHandler(error => {
+        container.textContent =
+          'Error loading inventory: ' + error.message;
+      })
+      .getProducts(authToken);
+  }
+
+
+  // CALCULATE PHYSICAL AND SALEABLE INVENTORY VALUES SEPARATELY.
+  // Physical value uses Column G (all remaining units), preserving the original
+  // inventory valuation. Saleable value uses only FEFO-eligible batches.
+  // Both totals use the complete products array, independent of search filters.
+  function updateInventoryValue() {
+    const values = products.reduce((totals, product) => {
+      const physicalStock = Math.max(0, Number(product.totalStock) || 0);
+      const saleableStock = Math.max(0, Number(product.saleableStock ?? product.stock) || 0);
+      const sellingPrice = Math.max(0, Number(product.price) || 0);
+      totals.physical += physicalStock * sellingPrice;
+      totals.saleable += saleableStock * sellingPrice;
+      return totals;
+    }, { physical: 0, saleable: 0 });
+
+    const formatKes = value => 'KES ' + value.toLocaleString('en-KE', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+    const physicalDisplay = document.getElementById('inventoryValue');
+    if (physicalDisplay) physicalDisplay.textContent = formatKes(values.physical);
+    const saleableDisplay = document.getElementById('saleableInventoryValue');
+    if (saleableDisplay) saleableDisplay.textContent = formatKes(values.saleable);
+  }
+
+  // DISPLAY AND SEARCH MEDICINES
+  function renderProducts() {
+    const query =
+      document.getElementById('search').value.toLowerCase();
+
+    const container = document.getElementById('products');
+
+    const filtered = products.filter(p =>
+      p.name.toLowerCase().includes(query)
+    );
+
+    const lowStockProducts = products.filter(p => Number(p.weeklyConsumption || 0) > 0 && Number(p.stock || 0) < Number(p.weeklyConsumption || 0));
+    const alertSummary = document.getElementById('stockAlertSummary');
+    if (alertSummary) {
+      alertSummary.style.display = lowStockProducts.length ? 'block' : 'none';
+      alertSummary.textContent = lowStockProducts.length
+        ? `LOW STOCK ALERT: ${lowStockProducts.length} product(s) have less saleable stock than their actual sales over the previous 7 days.`
+        : '';
+    }
+
+    if (!filtered.length) {
+      container.textContent = 'No matching medicines found.';
+      return;
+    }
+
+    container.innerHTML = filtered.map(p => {
+      const weekly = Number(p.weeklyConsumption || 0);
+      const available = Number(p.stock || 0);
+      const isLow = weekly > 0 && available < weekly;
+      const shortfall = Math.max(0, weekly - available);
+      return `
+      <div class="product">
+        <div>
+          <strong>${escapeHtml(p.name)}</strong>
+          <div class="muted">
+            KES ${Number(p.price).toFixed(2)} |
+            Physical stock: ${p.totalStock} | Saleable stock: ${p.stock}${p.earliestExpiry ? ` | Earliest batch expiry: ${escapeHtml(p.earliestExpiry)}` : ''}${p.expiredOrUnverifiedStock > 0 ? ` | Expired/undated: ${p.expiredOrUnverifiedStock} (blocked)` : ''}
+          </div>
+          ${isLow ? `<div class="stock-alert"><strong>⚠ LOW STOCK — REORDER REQUIRED</strong>Available saleable stock: ${available} · Previous 7-day consumption: ${weekly} · Below consumption by: ${shortfall}</div>` : ''}
+        </div>
+
+        <button
+          onclick="addToCart(${p.row})"
+          ${p.stock <= 0 ? 'disabled' : ''}>
+          Add
+        </button>
+      </div>`;
+    }).join('');
+  }
+
+  // PROTECT DISPLAYED TEXT
+  function escapeHtml(value) {
+    return String(value).replace(/[&<>"']/g, c => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;'
+    })[c]);
+  }
+
+  // ADD MEDICINE TO CART
+  function addToCart(row) {
+    const product = products.find(p => p.row === row);
+    if (!product) return;
+
+    const existing = cart.find(item => item.row === row);
+
+    if (existing) {
+      if (existing.quantity >= product.stock) {
+        alert('Not enough stock available.');
+        return;
+      }
+
+      existing.quantity++;
+    } else {
+      cart.push({
+        row: product.row,
+        name: product.name,
+        price: product.price,
+        quantity: 1
+      });
+    }
+
+    renderCart();
+  }
+
+  // CHANGE QUANTITY
+  function changeQuantity(row, amount) {
+    const item = cart.find(i => i.row === row);
+    const product = products.find(p => p.row === row);
+
+    if (!item || !product) return;
+
+    item.quantity += amount;
+
+    if (item.quantity <= 0) {
+      cart = cart.filter(i => i.row !== row);
+    } else if (item.quantity > product.stock) {
+      item.quantity = product.stock;
+      alert('Available stock limit reached.');
+    }
+
+    renderCart();
+  }
+
+  // SET AN EXACT CART QUANTITY DIRECTLY
+  function setCartQuantity(row, rawValue) {
+    const item = cart.find(i => i.row === row);
+    const product = products.find(p => p.row === row);
+    if (!item || !product) return;
+
+    const quantity = Number(rawValue);
+    if (!Number.isInteger(quantity) || quantity < 1) {
+      alert('Enter a whole-number quantity of at least 1.');
+      renderCart();
+      return;
+    }
+    if (quantity > Number(product.stock || 0)) {
+      alert('Only ' + Number(product.stock || 0) + ' units are currently available.');
+      item.quantity = Math.max(1, Math.floor(Number(product.stock) || 1));
+    } else {
+      item.quantity = quantity;
+    }
+    renderCart();
+  }
+
+  // UPDATE TOTAL WHILE THE USER TYPES A VALID QUANTITY
+  function previewCartQuantity(row, rawValue) {
+    const item = cart.find(i => i.row === row);
+    const product = products.find(p => p.row === row);
+    if (!item || !product) return;
+    if (rawValue === '') return;
+    const quantity = Number(rawValue);
+    if (Number.isInteger(quantity) && quantity >= 1 && quantity <= Number(product.stock || 0)) {
+      item.quantity = quantity;
+      updateCartTotal();
+      const lineTotal = document.getElementById('cart-line-total-' + row);
+      if (lineTotal) lineTotal.textContent = 'KES ' + (item.price * quantity).toFixed(2);
+    }
+  }
+
+  // DISPLAY CART AND TOTAL
+  function renderCart() {
+    const container = document.getElementById('cart');
+
+    if (!cart.length) {
+      container.textContent = 'Your cart is empty.';
+    } else {
+      container.innerHTML = cart.map(item => {
+        const product = products.find(p => p.row === item.row);
+        const maxStock = Math.max(1, Math.floor(Number(product && product.stock) || 0));
+        return `
+        <div class="cart-line">
+          <div>
+            <strong>${escapeHtml(item.name)}</strong>
+            <div class="muted" id="cart-line-total-${item.row}">
+              KES ${(item.price * item.quantity).toFixed(2)}
+            </div>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+            <button type="button" aria-label="Decrease quantity" onclick="changeQuantity(${item.row},-1)">−</button>
+            <input
+              type="number"
+              inputmode="numeric"
+              min="1"
+              max="${maxStock}"
+              step="1"
+              value="${item.quantity}"
+              aria-label="Quantity for ${escapeHtml(item.name)}"
+              title="Type the exact quantity"
+              style="width:76px;min-height:38px;text-align:center;padding:6px"
+              oninput="previewCartQuantity(${item.row},this.value)"
+              onchange="setCartQuantity(${item.row},this.value)"
+            >
+            <button type="button" aria-label="Increase quantity" onclick="changeQuantity(${item.row},1)">+</button>
+          </div>
+        </div>`;
+      }).join('');
+    }
+
+    updateCartTotal();
+  }
+
+  function updateCartTotal() {
+    const total = cart.reduce(
+      (sum, item) => sum + item.price * item.quantity,
+      0
+    );
+    document.getElementById('total').textContent = 'KES ' + total.toFixed(2);
+  }
+
+  // OPTIONAL CUSTOMER RECEIPT
+  let currentReceiptForPrinting = null;
+
+  function buildReceiptMarkup(sale) {
+    const items = Array.isArray(sale.items) ? sale.items : [];
+    const itemRows = items.map(item => {
+      const quantity = Number(item.quantity || 0);
+      const unitPrice = Number(item.unitPrice ?? item.price ?? 0);
+      const lineTotal = Number(item.lineTotal ?? (quantity * unitPrice));
+      return `<tr>
+        <td>${escapeHtml(item.medicine || item.name || 'Medicine')}</td>
+        <td>${quantity}</td>
+        <td>${money(unitPrice)}</td>
+        <td>${money(lineTotal)}</td>
+      </tr>`;
+    }).join('');
+
+    return `
+      <div class="receipt-center">
+        <h4>AFIAMEDS</h4>
+        <div><strong>WELLNESS PHARMACEUTICALS</strong></div>
+        <div class="muted">Customer Sales Receipt</div>
+      </div>
+      <hr style="border:0;border-top:1px dashed #aebdb3;margin:12px 0">
+      <p><strong>Receipt No:</strong> ${escapeHtml(sale.receipt || 'PENDING')}</p>
+      <p><strong>Date/time:</strong> ${escapeHtml(sale.date || new Date().toLocaleString())}</p>
+      <p><strong>Payment:</strong> ${escapeHtml(sale.paymentMethod || 'Not recorded')}</p>
+      <p><strong>Served by:</strong> ${escapeHtml(sale.staff || (currentUser && currentUser.name) || 'Staff')}</p>
+      <table>
+        <thead><tr><th>Medicine</th><th>Qty</th><th>Unit</th><th>Amount</th></tr></thead>
+        <tbody>${itemRows}</tbody>
+      </table>
+      <div class="receipt-grand-total">TOTAL: ${money(sale.total)}</div>
+      <hr style="border:0;border-top:1px dashed #aebdb3;margin:12px 0">
+      <div class="receipt-center"><strong>Thank you for choosing AfiaMeds.</strong><br><small>Live healthy, live productive.</small></div>
+      <p class="muted" style="text-align:center;margin-bottom:0">Please retain this receipt for your records.</p>`;
+  }
+
+  function showOptionalReceipt(sale) {
+    currentReceiptForPrinting = sale;
+    document.getElementById('optionalReceiptPreview').innerHTML = buildReceiptMarkup(sale);
+    const panel = document.getElementById('optionalReceiptPanel');
+    panel.style.display = 'block';
+    panel.scrollIntoView({behavior:'smooth', block:'nearest'});
+  }
+
+  function printReceiptDocument(sale) {
+    const popup = window.open('', '_blank', 'width=420,height=700');
+    if (!popup) {
+      alert('Please allow pop-ups for this POS to print the receipt.');
+      return;
+    }
+    const receiptMarkup = buildReceiptMarkup(sale);
+    popup.document.open();
+    popup.document.write(`<!DOCTYPE html><html><head><title>Receipt ${escapeHtml(sale.receipt || '')}</title>
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <style>
+        @page{size:80mm auto;margin:5mm}
+        body{font-family:Arial,sans-serif;color:#111;margin:0 auto;max-width:80mm;font-size:12px}
+        h4{font-size:19px;margin:0 0 4px}
+        .receipt-center{text-align:center}
+        .muted{color:#555;font-size:10px}
+        p{margin:5px 0}
+        table{width:100%;border-collapse:collapse;margin-top:10px;font-size:11px}
+        th,td{padding:5px 2px;border-bottom:1px solid #ddd;text-align:left;vertical-align:top}
+        th:last-child,td:last-child{text-align:right}
+        .receipt-grand-total{text-align:right;font-size:16px;font-weight:bold;margin-top:12px}
+        hr{border:0;border-top:1px dashed #888;margin:10px 0}
+        @media print{body{width:80mm}}
+      </style></head><body>${receiptMarkup}
+      <script>window.onload=function(){window.focus();window.print();};<\/script>
+      </body></html>`);
+    popup.document.close();
+  }
+
+  function printCurrentReceipt() {
+    if (!currentReceiptForPrinting) return;
+    printReceiptDocument(currentReceiptForPrinting);
+  }
+
+  function dismissOptionalReceipt() {
+    document.getElementById('optionalReceiptPanel').style.display = 'none';
+    currentReceiptForPrinting = null;
+  }
+
+  function printSelectedHistoryReceipt() {
+    const records = window.individualSalesRecords || [];
+    const sale = records.find(item => item.receipt === selectedReceiptForReversal);
+    if (!sale) {
+      alert('Receipt details are not available. Reload the sales history and try again.');
+      return;
+    }
+    printReceiptDocument(sale);
+  }
+
+  // CHECK INTERACTIONS BEFORE POSTING A SALE
+  function checkout() {
+    if (!cart.length) { alert('Please add a medicine first.'); return; }
+    const button = document.getElementById('checkout');
+    const message = document.getElementById('message');
+    button.disabled = true;
+    message.textContent = 'Checking medicine combinations...';
+    const saleCart = cart.map(item => ({row:item.row, quantity:item.quantity}));
+    google.script.run
+      .withSuccessHandler(result => {
+        pendingInteractionReview = result || {alerts:[],unrecognized:[]};
+        const hasAlerts = pendingInteractionReview.alerts && pendingInteractionReview.alerts.length;
+        const hasPrecautions = pendingInteractionReview.precautions && pendingInteractionReview.precautions.length;
+        const hasUnknown = pendingInteractionReview.unrecognized && pendingInteractionReview.unrecognized.length;
+        if (hasAlerts || hasPrecautions || hasUnknown) {
+          showInteractionModal(pendingInteractionReview);
+          message.textContent = 'Clinical review required before checkout.';
+          button.disabled = false;
+        } else {
+          submitSaleAfterInteractionReview({confirmed:false,ruleIds:[],unrecognizedAcknowledged:true});
+        }
+      })
+      .withFailureHandler(error => {
+        message.textContent = 'Interaction check failed: ' + error.message + '. Sale was not posted.';
+        button.disabled = false;
+      })
+      .checkCartInteractions(saleCart, authToken);
+  }
+
+  function showInteractionModal(result) {
+    const alerts = result.alerts || [];
+    const unknown = result.unrecognized || [];
+    const precautions = result.precautions || [];
+    document.getElementById('interactionIntro').textContent = (alerts.length || precautions.length)
+      ? 'The offline check found a potential interaction or a medicine-specific safety precaution. Review the concise alerts below and ask the relevant patient-safety question before dispensing.'
+      : 'Some medicines are not recognized by the limited offline database. They have NOT been screened.';
+    document.getElementById('interactionAlertList').innerHTML = alerts.map(a => `
+      <div class="interaction-alert ${String(a.severity).includes('MODERATE') ? 'moderate' : ''}">
+        <div class="interaction-severity">${escapeHtml(a.severity)}</div>
+        <strong>${escapeHtml(a.title)}</strong>
+        <p><strong>Medicines:</strong> ${a.medicines.map(escapeHtml).join(' + ')}</p>
+        <p><strong>Potential consequence:</strong> ${escapeHtml(a.effect)}</p>
+        <p><strong>Recommended action:</strong> ${escapeHtml(a.action)}</p>
+        <small>Reference rule: ${escapeHtml(a.ruleId)}${a.source ? ' · Source: ' + escapeHtml(a.source) : ''}</small>
+      </div>`).join('') || '<p>No listed interaction was detected among recognized ingredients.</p>';
+    const precautionGroups = {};
+    precautions.forEach(a => {
+      if (!precautionGroups[a.medicine]) precautionGroups[a.medicine] = [];
+      precautionGroups[a.medicine].push(a);
+    });
+    document.getElementById('medicationPrecautionList').innerHTML = precautions.length
+      ? '<h3>Special population / medicine safety warnings</h3>' + Object.keys(precautionGroups).map(medicine => `
+        <div class="precaution-alert">
+          <strong>${escapeHtml(medicine)}</strong>
+          ${precautionGroups[medicine].map(a => `
+            <div style="margin-top:9px;padding-top:8px;border-top:1px solid #eadbb8">
+              <span class="precaution-population">${escapeHtml(a.population)}</span>
+              <div class="interaction-severity">${escapeHtml(a.severity)}</div>
+              <strong>${escapeHtml(a.title)}</strong>
+              <p><strong>Why it matters:</strong> ${escapeHtml(a.concern)}</p>
+              <p><strong>Dispenser clue:</strong> ${escapeHtml(a.action)}</p>
+              ${a.source ? `<small>Source: ${escapeHtml(a.source)}</small>` : ''}
+            </div>`).join('')}
+        </div>`).join('')
+      : '';
+    document.getElementById('interactionUnscreened').innerHTML = unknown.length
+      ? `<div class="interaction-alert moderate"><strong>Not screened by this database:</strong><ul>${unknown.map(n=>`<li>${escapeHtml(n)}</li>`).join('')}</ul><p>Confirm each ingredient from the pack/label and check a trusted clinical reference before dispensing.</p></div>`
+      : '';
+    document.getElementById('interactionModal').style.display = 'flex';
+  }
+
+  function cancelInteractionCheckout() {
+    document.getElementById('interactionModal').style.display = 'none';
+    pendingInteractionReview = null;
+    document.getElementById('message').textContent = 'Sale cancelled. No medicines were posted.';
+  }
+
+  function confirmInteractionAndCheckout() {
+    if (!pendingInteractionReview) return;
+    const result = pendingInteractionReview;
+    document.getElementById('interactionModal').style.display = 'none';
+    const review = {
+      confirmed: true,
+      ruleIds: (result.alerts || []).map(a => a.ruleId).concat((result.precautions || []).map(a => a.ruleId)),
+      unrecognizedAcknowledged: true
+    };
+    pendingInteractionReview = null;
+    submitSaleAfterInteractionReview(review);
+  }
+
+  function submitSaleAfterInteractionReview(interactionReview) {
+    if (!cart.length) return;
+    const button = document.getElementById('checkout');
+    const message = document.getElementById('message');
+    button.disabled = true;
+    message.textContent = 'Posting sale...';
+    const receiptCart = cart.map(item => ({...item}));
+    const saleCart = cart.map(item => ({row:item.row,quantity:item.quantity}));
+    const payment = document.getElementById('payment').value;
+    google.script.run
+      .withSuccessHandler(result => {
+        if (!result || !result.success) {
+          message.textContent = 'Sale could not be confirmed.';
+          button.disabled = false;
+          return;
+        }
+        const completedSale = {
+          receipt: result.receipt || 'PENDING',
+          date: new Date().toLocaleString(),
+          paymentMethod: payment,
+          staff: currentUser && currentUser.name ? currentUser.name : 'Staff',
+          items: receiptCart.map(item => ({
+            medicine: item.name,
+            quantity: item.quantity,
+            unitPrice: Number(item.price || 0),
+            lineTotal: Number(item.price || 0) * Number(item.quantity || 0)
+          })),
+          total: receiptCart.reduce((sum, item) => sum + Number(item.price || 0) * Number(item.quantity || 0), 0)
+        };
+        cart = [];
+        renderCart();
+        message.textContent = result.message + ' Sale reference: ' + result.receipt;
+        showOptionalReceipt(completedSale);
+        loadProducts();
+        button.disabled = false;
+      })
+      .withFailureHandler(error => {
+        message.textContent = 'Sale failed: ' + error.message;
+        button.disabled = false;
+      })
+      .completeSale(saleCart, payment, authToken, interactionReview);
+  }
+
+  // LOAD SALES DASHBOARD - TOGGLE OPEN/CLOSED
+  function loadDashboard() {
+    const dashboard = document.getElementById('dashboard');
+    const status = document.getElementById('dashboardStatus');
+    const button = document.getElementById('dashboardButton');
+
+    const isOpen = dashboard.style.display === 'block';
+
+    if (isOpen) {
+      closeDashboard();
+      return;
+    }
+
+    dashboard.style.display = 'block';
+    button.textContent = '✖ Close Dashboard';
+    status.textContent = 'Loading sales information...';
+
+    google.script.run
+      .withSuccessHandler(data => {
+
+        document.getElementById('dashRevenue').textContent =
+          money(data.revenue);
+
+        document.getElementById('dashTransactions').textContent =
+          data.transactions || 0;
+
+        document.getElementById('dashUnits').textContent =
+          data.units || 0;
+
+        document.getElementById('dashAverage').textContent =
+          money(data.averageSale);
+
+        const staffRows = data.staffSales || [];
+        document.getElementById('dashStaffSales').innerHTML = staffRows.map(item => `
+          <tr>
+            <td>${escapeHtml(item.staff || 'Unattributed / legacy sales')}</td>
+            <td>${Number(item.transactions || 0)}</td>
+            <td>${Number(item.units || 0)}</td>
+            <td>${money(item.revenue)}</td>
+          </tr>
+        `).join('') || '<tr><td colspan="4">No sales recorded today.</td></tr>';
+        document.getElementById('dashStaffSalesTotal').textContent = money(data.revenue);
+
+        if (currentUser && currentUser.role === 'ADMIN') {
+          document.getElementById('dashCostOfGoods').textContent = money(data.costOfGoods);
+          document.getElementById('dashGrossProfit').textContent = money(data.grossProfit);
+          document.getElementById('dashProfitMargin').textContent = Number(data.profitMargin || 0).toFixed(2) + '%';
+        }
+
+        const payments = data.payments || {};
+
+        document.getElementById('dashPayments').innerHTML =
+          Object.entries(payments).map(([method, amount]) => `
+            <tr>
+              <td>${escapeHtml(method)}</td>
+              <td>${money(amount)}</td>
+            </tr>
+          `).join('') ||
+          '<tr><td colspan="2">No sales recorded today.</td></tr>';
+
+        const medicines = data.topMedicines || [];
+
+        document.getElementById('dashMedicines').innerHTML =
+          medicines.map(item => `
+            <tr>
+              <td>${escapeHtml(item.name)}</td>
+              <td>${Number(item.quantity || 0)}</td>
+              <td>${money(item.revenue)}</td>
+            </tr>
+          `).join('') ||
+          '<tr><td colspan="3">No sales recorded today.</td></tr>';
+
+        status.textContent =
+          "Today's sales information loaded successfully.";
+      })
+      .withFailureHandler(error => {
+        status.textContent =
+          'Unable to load dashboard: ' + error.message;
+      })
+      .getSalesDashboard(authToken);
+  }
+
+  // CLOSE DASHBOARD
+  function closeDashboard() {
+    document.getElementById('dashboard').style.display = 'none';
+    document.getElementById('dashboardButton').textContent =
+      '📊 Sales Dashboard';
+  }
+
+
+  // LOAD INDIVIDUAL SALES HISTORY (READ-ONLY)
+  function loadIndividualHistory(mode) {
+    const periodInput = document.getElementById(
+      mode === 'date' ? 'historyDate' : 'historyMonth'
+    );
+    const status = document.getElementById('historyStatus');
+    const list = document.getElementById('individualSalesList');
+    const periodValue = periodInput.value;
+    document.getElementById('historyMonth').dataset.active = mode === 'month' ? 'true' : 'false';
+
+    if (!periodValue) {
+      status.textContent = mode === 'date'
+        ? 'Please select a date first.'
+        : 'Please select a month first.';
+      list.innerHTML = '';
+      return;
+    }
+
+    status.textContent = 'Loading individual sales...';
+    list.innerHTML = '';
+    closeReceiptDetails();
+
+    google.script.run
+      .withSuccessHandler(transactions => {
+        const records = Array.isArray(transactions) ? transactions : [];
+        if (!records.length) {
+          status.textContent = 'No sales transactions found for this period.';
+          return;
+        }
+
+        status.textContent = records.length +
+          ' transaction(s) found. Select any receipt to view its details.';
+
+        list.innerHTML = records.map((sale, index) => `
+          <div class="history-receipt" onclick="showReceiptDetails(${index})">
+            <strong>${escapeHtml(sale.receipt)}</strong>
+            ${sale.status === 'REVERSED' ? '<div class="reversed-label">REVERSED</div>' : ''}
+            <div class="muted">${escapeHtml(sale.date)} | ${escapeHtml(sale.paymentMethod)}</div>
+            <div>${Number(sale.units || 0)} unit(s) | <strong>${money(sale.total)}</strong></div>
+            <div class="muted">Staff: ${escapeHtml(sale.staff || 'Not recorded')}</div>
+          </div>
+        `).join('');
+
+        window.individualSalesRecords = records;
+      })
+      .withFailureHandler(error => {
+        status.textContent = 'Unable to load sales history: ' + error.message;
+      })
+      .getIndividualSalesHistory(mode, periodValue, authToken);
+  }
+
+  // SHOW ONE SELECTED RECEIPT
+  function showReceiptDetails(index) {
+    const records = window.individualSalesRecords || [];
+    const sale = records[index];
+    if (!sale) return;
+
+    const itemRows = (sale.items || []).map(item => `
+      <tr>
+        <td>${escapeHtml(item.medicine)}</td>
+        <td>${Number(item.quantity || 0)}</td>
+        <td>${money(item.unitPrice)}</td>
+        <td>${money(item.lineTotal)}</td>
+      </tr>
+    `).join('');
+
+    selectedReceiptForReversal = sale.receipt;
+    document.getElementById('reversalReason').value = '';
+    document.getElementById('reversalStatus').textContent = '';
+    const reversalPanel = document.getElementById('adminReversalPanel');
+    reversalPanel.style.display = currentUser && currentUser.role === 'ADMIN' && sale.status !== 'REVERSED' ? 'block' : 'none';
+    document.getElementById('receiptContent').innerHTML = `
+      <p><strong>Receipt:</strong> ${escapeHtml(sale.receipt)}</p>
+      <p><strong>Status:</strong> ${sale.status === 'REVERSED' ? '<span class="reversed-label">REVERSED</span>' : 'ACTIVE'}</p>
+      ${sale.status === 'REVERSED' ? `<p><strong>Reversed at:</strong> ${escapeHtml(sale.reversedAt || 'Not recorded')}</p><p><strong>Reversed by:</strong> ${escapeHtml(sale.reversedBy || 'Not recorded')}</p><p><strong>Reason:</strong> ${escapeHtml(sale.reversalReason || 'Not recorded')}</p>` : ''}
+      <p><strong>Date/time:</strong> ${escapeHtml(sale.date)}</p>
+      <p><strong>Payment method:</strong> ${escapeHtml(sale.paymentMethod)}</p>
+      <p><strong>Staff member:</strong> ${escapeHtml(sale.staff || 'Not recorded in this sale')}</p>
+      <table class="dashboard-table">
+        <thead>
+          <tr><th>Medicine</th><th>Qty</th><th>Unit price</th><th>Line total</th></tr>
+        </thead>
+        <tbody>${itemRows}</tbody>
+      </table>
+      <div class="history-total">Total: ${money(sale.total)}</div>
+    `;
+
+    document.getElementById('receiptDetails').style.display = 'block';
+  }
+
+  function closeReceiptDetails() {
+    document.getElementById('receiptDetails').style.display = 'none';
+    document.getElementById('receiptContent').innerHTML = '';
+    selectedReceiptForReversal = '';
+  }
+
+  // ADMIN-ONLY SALE REVERSAL
+  function submitSaleReversal() {
+    if (!currentUser || currentUser.role !== 'ADMIN') {
+      alert('Only an Admin can reverse a sale.');
+      return;
+    }
+    const receipt = selectedReceiptForReversal;
+    const reason = document.getElementById('reversalReason').value.trim();
+    const status = document.getElementById('reversalStatus');
+    const button = document.getElementById('reverseSaleButton');
+    if (!receipt) {
+      status.textContent = 'Select a receipt first.';
+      return;
+    }
+    if (reason.length < 5) {
+      status.textContent = 'Please enter a clear reason (at least 5 characters).';
+      return;
+    }
+    if (!confirm('Are you sure you want to reverse receipt ' + receipt + '? This will restore the sold quantities to inventory.')) return;
+
+    button.disabled = true;
+    status.textContent = 'Processing reversal...';
+    google.script.run
+      .withSuccessHandler(result => {
+        status.textContent = result.message + ' Reversed by ' + result.reversedBy + ' at ' + result.reversedAt + '.';
+        button.disabled = true;
+        document.getElementById('adminReversalPanel').style.display = 'none';
+        const records = window.individualSalesRecords || [];
+        const selectedSale = records.find(item => item.receipt === receipt);
+        if (selectedSale) {
+          selectedSale.status = 'REVERSED';
+          selectedSale.reversedAt = result.reversedAt;
+          selectedSale.reversedBy = result.reversedBy;
+          selectedSale.reversalReason = reason;
+        }
+        loadProducts();
+      })
+      .withFailureHandler(error => {
+        status.textContent = 'Reversal failed: ' + error.message;
+        button.disabled = false;
+      })
+      .reverseSale(receipt, reason, authToken);
+  }
+
+  // INITIALISE PAGE
+  window.addEventListener('load', () => { initialiseAuth(); });
+
+</script>
+
+</div>
+</body>
+</html>
