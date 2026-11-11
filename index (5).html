@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <base target="_top">
+  <base target="_self">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <style>
@@ -921,6 +921,82 @@
   </div>
 
 <script>
+  // AfiMeds GitHub Pages -> Apps Script bridge. The iframe runs on Google's
+  // origin and uses google.script.run, avoiding browser CORS restrictions.
+  (function () {
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyoCjE0gN06jNq10kuF2Ty7BJrstTtl_-2AQuhMIDY5SE_VTcCPAzaQG7ex0xXQM44F/exec';
+    const BRIDGE_ORIGIN = 'https://samwafashionhub.github.io';
+    const pending = new Map();
+    const queue = [];
+    let bridgeReady = false;
+    let nextId = 1;
+
+    const bridgeFrame = document.createElement('iframe');
+    bridgeFrame.title = 'AfiMeds secure backend connection';
+    bridgeFrame.setAttribute('aria-hidden', 'true');
+    bridgeFrame.style.cssText = 'position:fixed;width:1px;height:1px;left:-10000px;top:-10000px;border:0;opacity:0;pointer-events:none;';
+    bridgeFrame.src = APPS_SCRIPT_URL + '?bridge=1';
+    document.body.appendChild(bridgeFrame);
+
+    function send(request) {
+      if (!bridgeReady) { queue.push(request); return; }
+      pending.set(request.id, request);
+      bridgeFrame.contentWindow.postMessage({
+        type: 'AFIAMEDS_BRIDGE_CALL', id: request.id,
+        method: request.method, args: request.args
+      }, '*');
+    }
+
+    window.addEventListener('message', function (event) {
+      if (event.source !== bridgeFrame.contentWindow || !event.data) return;
+      const message = event.data;
+      if (message.type === 'AFIAMEDS_BRIDGE_READY') {
+        bridgeReady = true;
+        while (queue.length) send(queue.shift());
+        return;
+      }
+      if (message.type !== 'AFIAMEDS_BRIDGE_RESULT') return;
+      const request = pending.get(message.id);
+      if (!request) return;
+      pending.delete(message.id);
+      if (message.ok) {
+        if (typeof request.success === 'function') request.success(message.result);
+      } else if (typeof request.failure === 'function') {
+        request.failure({ message: message.error || 'The Apps Script request failed.' });
+      }
+    });
+
+    window.setTimeout(function () {
+      if (bridgeReady) return;
+      const error = { message: 'Could not connect to the AfiMeds backend. Check the Apps Script web app deployment access and reload this page.' };
+      while (queue.length) {
+        const request = queue.shift();
+        if (typeof request.failure === 'function') request.failure(error);
+      }
+    }, 25000);
+
+    function makeRunner(success, failure) {
+      return new Proxy({}, {
+        get: function (_target, property) {
+          if (property === 'withSuccessHandler') return function (fn) { return makeRunner(fn, failure); };
+          if (property === 'withFailureHandler') return function (fn) { return makeRunner(success, fn); };
+          if (property === 'withUserObject') return function () { return makeRunner(success, failure); };
+          if (typeof property !== 'string') return undefined;
+          return function () {
+            const id = nextId++;
+            send({ id: id, method: property, args: Array.prototype.slice.call(arguments), success: success, failure: failure });
+          };
+        }
+      });
+    }
+
+    window.google = window.google || {};
+    window.google.script = window.google.script || {};
+    window.google.script.run = makeRunner(null, null);
+  })();
+</script>
+
+<script>
 
   let products = [];
   let cart = [];
@@ -1098,8 +1174,7 @@
   function initialiseAuth() {
     // Prefer the token supplied by doGet(e); fall back to the browser URL.
     // The server-side value covers email clients that alter URL navigation.
-    const serverResetToken = <?!= JSON.stringify(resetToken || '') ?>;
-    const urlToken = serverResetToken || new URLSearchParams(window.location.search).get('reset');
+    const urlToken = new URLSearchParams(window.location.search).get('reset');
     if (urlToken) {
       passwordResetToken = urlToken;
       ['setupFields','loginFields','forgotFields','forcedPasswordFields'].forEach(id => document.getElementById(id).style.display='none');
